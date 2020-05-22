@@ -1,109 +1,132 @@
 import NimQml
+import macros
 
-QtObject:
-  type ChatMessage* = ref object of QObject
-    userName: string
-    message: string
-    timestamp: string
-    identicon: string
-    isCurrentUser: bool
+template NimQtProperty(varName, uppercaseVarName, selfObject, valueType): untyped =
+  proc `varName`*(self: selfObject): valueType {.slot.} =
+    result = self.varName
 
-  proc delete*(self: ChatMessage) =
-    self.QObject.delete
+  proc `varName Changed`*(self: selfObject, varName: valueType) {.signal.}
 
-  proc setup(self: ChatMessage) =
-    self.QObject.setup
+  proc `set uppercaseVarName`(self: selfObject, varName: valueType) {.slot.} =
+    if self.`valueType` == varName: return
+    self.`varName` = `varName`
+    self.`varName`Changed(varName)
 
-  proc newChatMessage*(): ChatMessage =
-    new(result)
-    result.userName = ""
-    result.message = ""
-    result.timestamp = "0"
-    result.identicon = ""
-    result.isCurrentUser = false
-    result.setup
+  proc `varName =`*(self: selfObject, varNameww: valueType) = self.`set uppercaseVarName`(varName)
 
-  proc userName*(self: ChatMessage): string {.slot.} =
-    result = self.userName
+  QtProperty[valueType] varName:
+    read = varName
+    write = `set uppercaseVarName`
+    notify = `varName Changed`
 
-  proc userNameChanged*(self: ChatMessage, userName: string) {.signal.}
+expandMacros:
+  QtObject:
+    type ChatMessage* = ref object of QObject
+      userName: string
+      message: string
+      timestamp: string
+      identicon: string
+      isCurrentUser: bool
 
-  proc setUserName(self: ChatMessage, userName: string) {.slot.} =
-    if self.userName == userName: return
-    self.userName = userName
-    self.userNameChanged(userName)
+    proc delete*(self: ChatMessage) =
+      self.QObject.delete
 
-  proc `userName=`*(self: ChatMessage, userName: string) = self.setUserName(userName)
+    proc setup(self: ChatMessage) =
+      self.QObject.setup
 
-  QtProperty[string] userName:
-    read = userName
-    write = setUserName
-    notify = userNameChanged
+    proc newChatMessage*(): ChatMessage =
+      new(result)
+      result.userName = ""
+      result.message = ""
+      result.timestamp = "0"
+      result.identicon = ""
+      result.isCurrentUser = false
+      result.setup
 
-  proc message*(self: ChatMessage): string {.slot.} =
-    result = self.message
+    # proc userName*(self: ChatMessage): string {.slot.} =
+    #   result = self.userName
 
-  proc messageChanged*(self: ChatMessage, message: string) {.signal.}
+    NimQtProperty(username, Username, ChatMessage, string)
+    # NimQtProperty(username, Username, ChatMessage, string)
 
-  proc setMessage(self: ChatMessage, message: string) {.slot.} =
-    if self.message == message: return
-    self.message = message
-    self.messageChanged(message)
+    # proc userNameChanged*(self: ChatMessage, userName: string) {.signal.}
 
-  proc `message=`*(self: ChatMessage, message: string) = self.setMessage(message)
+    # proc setUserName(self: ChatMessage, userName: string) {.slot.} =
+    #   if self.userName == userName: return
+    #   self.userName = userName
+    #   self.userNameChanged(userName)
 
-  QtProperty[string] message:
-    read = message
-    write = setMessage
-    notify = messageChanged
+    # proc `userName=`*(self: ChatMessage, userName: string) = self.setUserName(userName)
 
-  proc timestamp*(self: ChatMessage): string {.slot.} =
-    result = self.timestamp
+    # QtProperty[string] userName:
+    #   read = userName
+    #   write = setUserName
+    #   notify = userNameChanged
 
-  proc timestampChanged*(self: ChatMessage, timestamp: string) {.signal.}
+    proc message*(self: ChatMessage): string {.slot.} =
+      result = self.message
 
-  proc setTimestamp(self: ChatMessage, timestamp: string) {.slot.} =
-    if self.timestamp == timestamp: return
-    self.timestamp = timestamp
-    self.timestampChanged(timestamp)
+    proc messageChanged*(self: ChatMessage, message: string) {.signal.}
 
-  proc `timestamp=`*(self: ChatMessage, timestamp: string) = self.setTimestamp(timestamp)
+    proc setMessage(self: ChatMessage, message: string) {.slot.} =
+      if self.message == message: return
+      self.message = message
+      self.messageChanged(message)
 
-  QtProperty[string] timestamp:
-    read = timestamp
-    write = setTimestamp
-    notify = timestampChanged
+    proc `message=`*(self: ChatMessage, message: string) = self.setMessage(message)
 
-  proc identicon*(self: ChatMessage): string {.slot.} =
-    result = self.identicon
+    QtProperty[string] message:
+      read = message
+      write = setMessage
+      notify = messageChanged
 
-  proc identiconChanged*(self: ChatMessage, identicon: string) {.signal.}
+    proc timestamp*(self: ChatMessage): string {.slot.} =
+      result = self.timestamp
 
-  proc setIdenticon(self: ChatMessage, identicon: string) {.slot.} =
-    if self.identicon == identicon: return
-    self.identicon = identicon
-    self.identiconChanged(identicon)
+    proc timestampChanged*(self: ChatMessage, timestamp: string) {.signal.}
 
-  proc `identicon=`*(self: ChatMessage, identicon: string) = self.setIdenticon(identicon)
+    proc setTimestamp(self: ChatMessage, timestamp: string) {.slot.} =
+      if self.timestamp == timestamp: return
+      self.timestamp = timestamp
+      self.timestampChanged(timestamp)
 
-  QtProperty[string] identicon:
-    read = identicon
-    write = setIdenticons
-    notify = identiconsChanged
+    proc `timestamp=`*(self: ChatMessage, timestamp: string) = self.setTimestamp(timestamp)
 
-  proc isCurrentUser*(self: ChatMessage): bool {.slot.} =
-    result = self.isCurrentUser
+    QtProperty[string] timestamp:
+      read = timestamp
+      write = setTimestamp
+      notify = timestampChanged
 
-  proc isCurrentUserChanged*(self: ChatMessage, isCurrentUser: bool) {.signal.}
+    proc identicon*(self: ChatMessage): string {.slot.} =
+      result = self.identicon
 
-  proc setIsCurrentUser(self: ChatMessage, isCurrentUser: bool) {.slot.} =
-    if self.isCurrentUser == isCurrentUser: return
-    self.isCurrentUser = isCurrentUser
-    self.isCurrentUserChanged(isCurrentUser)
+    proc identiconChanged*(self: ChatMessage, identicon: string) {.signal.}
 
-  proc `isCurrentUser=`*(self: ChatMessage, isCurrentUser: bool) = self.setIsCurrentUser(isCurrentUser)
+    proc setIdenticon(self: ChatMessage, identicon: string) {.slot.} =
+      if self.identicon == identicon: return
+      self.identicon = identicon
+      self.identiconChanged(identicon)
 
-  QtProperty[bool] isCurrentUser:
-    read = isCurrentUser
-    write = setIsCurrentUser
-    notify = isCurrentUserChanged
+    proc `identicon=`*(self: ChatMessage, identicon: string) = self.setIdenticon(identicon)
+
+    QtProperty[string] identicon:
+      read = identicon
+      write = setIdenticons
+      notify = identiconsChanged
+
+    proc isCurrentUser*(self: ChatMessage): bool {.slot.} =
+      result = self.isCurrentUser
+
+    proc isCurrentUserChanged*(self: ChatMessage, isCurrentUser: bool) {.signal.}
+
+    proc setIsCurrentUser(self: ChatMessage, isCurrentUser: bool) {.slot.} =
+      if self.isCurrentUser == isCurrentUser: return
+      self.isCurrentUser = isCurrentUser
+      self.isCurrentUserChanged(isCurrentUser)
+
+    proc `isCurrentUser=`*(self: ChatMessage, isCurrentUser: bool) = self.setIsCurrentUser(isCurrentUser)
+
+    QtProperty[bool] isCurrentUser:
+      read = isCurrentUser
+      write = setIsCurrentUser
+      notify = isCurrentUserChanged
