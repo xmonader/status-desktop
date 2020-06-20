@@ -145,6 +145,29 @@ RowLayout {
                 source: parent.checked ? "img/node.svg" : "img/node.svg"
             }
         }
+
+        TabButton {
+            id: keyUtilBtn
+            width: 40
+            height: 40
+            text: ""
+            anchors.topMargin: 50
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: profileBtn.top
+            background: Rectangle {
+                color: Theme.lightBlue
+                opacity: parent.checked ? 1 : 0
+                radius: 50
+            }
+
+            Image {
+                id: image4
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                fillMode: Image.PreserveAspectFit
+                source: parent.checked ? "img/node.svg" : "img/node.svg"
+            }
+        }
     }
 
     StackLayout {
@@ -183,6 +206,13 @@ RowLayout {
 
         NodeLayout {
             id: nodeLayoutContainer
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.fillHeight: true
+        }
+
+        KeyUtilLayout {
+            id: keyUtilLayoutContainer
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignLeft | Qt.AlignTop
             Layout.fillHeight: true

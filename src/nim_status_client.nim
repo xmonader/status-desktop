@@ -8,6 +8,7 @@ import app/node/core as node
 import app/profile/core as profile
 import app/onboarding/core as onboarding
 import app/login/core as login
+import app/keyutil/core as keyutil
 import signals/core as signals
 
 import status/libstatus/types
@@ -48,12 +49,16 @@ proc mainProc() =
   var profile = profile.newController(status)
   engine.setRootContextProperty("profileModel", profile.variant)
 
+  var keyUtil = keyutil.newController(status)
+  engine.setRootContextProperty("keyUtilModel", profile.variant)
+
   status.events.on("login") do(a: Args):
     var args = AccountArgs(a)
     status.startMessenger()
     chat.init()
     wallet.init()
     profile.init(args.account)
+    keyUtil.init()
 
   var login = login.newController(status)
   var onboarding = onboarding.newController(status)
