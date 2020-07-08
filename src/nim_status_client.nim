@@ -75,14 +75,26 @@ proc mainProc() =
     chat.delete()
     profile.delete()
 
-
   # Initialize only controllers whose init functions
   # do not need a running node
   proc initControllers() =
     node.init()
     login.init()
     onboarding.init()
-  
+    echo "-----------------------------"
+    echo "-----------------------------"
+    var recording = newAudioRecording()
+    echo "-----------------------------"
+    startRecording(recording)
+    echo $recordingError(recording)
+    echo "-----------------------------"
+    echo "-----------------------------"
+    stopRecording(recording)
+    echo "-----------------------------"
+    echo "-----------------------------"
+    # recording.record()
+    # recording.stop()
+
   initControllers()
 
   # Handle node.stopped signal when user has logged out
