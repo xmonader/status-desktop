@@ -8,6 +8,7 @@ import "../../../../imports"
 
 Rectangle {
     id: rectangle
+    property alias textInput: txtData
     border.width: 0
     height: 52
     color: Style.current.transparent
@@ -32,11 +33,12 @@ Rectangle {
 
     function onEnter(event){
         if (event.modifiers === Qt.NoModifier && (event.key === Qt.Key_Enter || event.key === Qt.Key_Return)) {
-            if(txtData.text.trim().length > 0){
-                let msg = interpretMessage(txtData.text.trim())
+            let rawText = txtData.text.replace(/<[^>]+>/g, '').replace('p, li { white-space: pre-wrap; }', '').trim()
+            if(rawText.trim().length > 0){
+                let msg = interpretMessage(rawText.trim())
                 chatsModel.sendMessage(msg, chatColumn.isReply ? SelectedMessage.messageId : "");
                 txtData.text = "";
-                event.accepted = true;
+                event.accepted = true
                 sendMessageSound.stop()
                 Qt.callLater(sendMessageSound.play);
             }
@@ -52,7 +54,7 @@ Rectangle {
         anchors.rightMargin: 0
 
         StyledTArea {
-            textFormat: TextArea.PlainText
+            textFormat: TextArea.RichText
 
             id: txtData
             text: ""

@@ -1,2 +1,5 @@
 ContactsColumn 1.0 ContactsColumn.qml
 ChatColumn 1.0 ChatColumn.qml
+Suggestions 1.0 Suggestions.qml
+SuggestionBox 1.0 SuggestionBox.qml
+SuggestionFilter 1.0 SuggestionFilter.qml

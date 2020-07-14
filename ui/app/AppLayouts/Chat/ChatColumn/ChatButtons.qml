@@ -23,7 +23,8 @@ Item {
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right
         onClicked: {
-            chatsModel.sendMessage(txtData.text, chatColumn.isReply ? SelectedMessage.messageId : "")
+            let rawText = txtData.text.replace(/<[^>]+>/g, '').replace('p, li { white-space: pre-wrap; }', '').trim()
+            chatsModel.sendMessage(rawText, chatColumn.isReply ? SelectedMessage.messageId : "")
             txtData.text = ""
         }
         background: Rectangle {

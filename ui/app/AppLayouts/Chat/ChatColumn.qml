@@ -63,6 +63,34 @@ StackLayout {
             }
         }
  
+        Suggestions {
+            id: suggestions
+        }
+
+        SuggestionBox {
+            id: suggestionsBox
+            model: suggestions
+            width: chatContainer.width
+            anchors.bottom: inputArea.top
+            anchors.left: inputArea.left
+            filter: chatInput.textInput.text
+            property: "aliasName"
+            onItemSelected: function (item) {
+              let currentText = chatInput.textInput.text
+              let lastAt = currentText.lastIndexOf("@")
+              let left = currentText.slice(0, lastAt + 1)
+              let right = currentText.substring(lastAt + 1)
+
+              let text = left + item + " " + right
+              let rawText = text.replace(/<[^>]+>/g, '').replace('p, li { white-space: pre-wrap; }', '').trim()
+              chatInput.textInput.text = text
+
+              chatInput.textInput.cursorPosition = rawText.length + 1
+              suggestionsBox.suggestionsModel.clear()
+
+            }
+        }
+
         Rectangle {
             id: inputArea
             color: Style.current.background
@@ -81,6 +109,7 @@ StackLayout {
             }
 
             ChatInput {
+                id: chatInput
                 height: 40
                 anchors.top: !isReply ? inputArea.top : replyAreaContainer.bottom
                 anchors.topMargin: 4
@@ -88,6 +117,7 @@ StackLayout {
                 anchors.right: parent.right
                 anchors.bottom: parent.bottom
             }
+
         }
     }
 
