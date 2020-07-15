@@ -95,12 +95,13 @@ Rectangle {
                     anchors.left: parent.left
                     anchors.leftMargin: Style.current.smallPadding
                     anchors.verticalCenter: parent.verticalCenter
+                    source: suggestion.identicon
                 }
 
                 Text {
                     id: textComponent
                     color: delegateItem.hovered ? Style.current.white : Style.current.black
-                    text: suggestion.aliasName
+                    text: suggestion[container.property]
                     width: parent.width
                     height: parent.height
                     anchors.left: accountImage.right
@@ -118,7 +119,7 @@ Rectangle {
                     onExited: {
                       delegateItem.hovered = false
                     }
-                    onClicked: container.itemSelected(delegateItem.suggestion.pubKey)
+                    onClicked: container.itemSelected(delegateItem.suggestion.address)
                 }
             }
         }

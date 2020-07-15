@@ -63,8 +63,24 @@ StackLayout {
             }
         }
  
-        Suggestions {
+        ListModel {
             id: suggestions
+        }
+
+        Connections {
+            target: chatsModel
+            onActiveChannelChanged: {
+              suggestions.clear()
+              for (let i = 0; i < chatsModel.suggestionList.rowCount(); i++) {
+                suggestions.append({
+                  alias: chatsModel.suggestionList.rowData(i, "alias"),
+                  ensName: chatsModel.suggestionList.rowData(i, "ensName"),
+                  address: chatsModel.suggestionList.rowData(i, "address"),
+                  identicon: chatsModel.suggestionList.rowData(i, "identicon"),
+                  ensVerified: chatsModel.suggestionList.rowData(i, "ensVerified")
+                });
+              }
+            }
         }
 
         SuggestionBox {
@@ -74,7 +90,7 @@ StackLayout {
             anchors.bottom: inputArea.top
             anchors.left: inputArea.left
             filter: chatInput.textInput.text
-            property: "aliasName"
+            property: "alias"
             onItemSelected: function (item) {
               let currentText = chatInput.textInput.text
               let lastAt = currentText.lastIndexOf("@")
