@@ -104,6 +104,37 @@ StackLayout {
               chatInput.textInput.cursorPosition = rawText.length + 1
               suggestionsBox.suggestionsModel.clear()
 
+
+              /* let currentText = chatInput.textInput.text.replace(/<[^>]+>/g, '').replace('p, li { white-space: pre-wrap; }', '').trim() */
+
+              /* let user; */
+
+              /* for (let i = 0; i < suggestions.count; i++) { */
+              /*   let suggestion = suggestions.get(i) */
+              /*   if (suggestion.pubKey == item) { */
+              /*     user = suggestion */
+              /*     break; */
+              /*   } */
+              /* } */
+
+              /* let lastAt = currentText.lastIndexOf("@") */
+              /* let mention = '<a name="'+item+'">@'+user.aliasName+'</a>' */
+              /* let nameLen = user.aliasName.length + 2 // We're doing a +2 here because of the `@` and the trailing whitespace */
+              /* let position = 0; */
+              /* let text = "" */
+
+              /* if (currentText.length == 1) { */
+              /*   position = nameLen */
+              /*   text = mention + " " */
+              /* } else { */
+              /*   let left = currentText.slice(0, lastAt) */
+              /*   position = left.length + nameLen */
+              /*   text = left + mention + " " */
+              /* } */
+
+              /* chatInput.textInput.text = text */
+              /* chatInput.textInput.cursorPosition = position */
+              /* suggestionsBox.suggestionsModel.clear() */
             }
         }
 

@@ -45,9 +45,7 @@ QtObject:
     result.status = status
     result.chats = newChannelsList(status)
     result.activeChannel = newChatItemView(status)
-    result.activeStickerPackId = RECENT_STICKERS
     result.currentSuggestions = newSuggestionsList()
-    result.activeStickerPackId = RECENT_STICKERS
     result.messageList = initTable[string, ChatMessageList]()
     result.stickerPacks = newStickerPackList()
     result.recentStickers = newStickerList()
