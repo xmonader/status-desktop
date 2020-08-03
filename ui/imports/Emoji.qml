@@ -7,7 +7,7 @@ QtObject {
     property string base: Qt.resolvedUrl("twemoji/")
     function parse(text, size) {
         Twemoji.twemoji.base = base
-        Twemoji.twemoji.ext = ".png"
+        Twemoji.twemoji.ext = ".svg"
         Twemoji.twemoji.size = size
         return Twemoji.twemoji.parse(text)
     }

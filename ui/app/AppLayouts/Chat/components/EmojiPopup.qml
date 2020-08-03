@@ -75,7 +75,7 @@ Popup {
                 categoryNames[emoji.category] = newCategories.length
                 newCategories.push([])
             }
-            newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode + '.png'}))
+            newCategories[categoryNames[emoji.category]].push(Object.assign({}, emoji, {filename: emoji.unicode + '.svg'}))
         })
 
         // Add recent
@@ -125,7 +125,7 @@ Popup {
                 anchors.verticalCenter: searchBox.verticalCenter
                 anchors.right: parent.right
                 anchors.rightMargin: emojiHeader.headerMargin
-                source: "../../../../imports/twemoji/26x26/1f590.png"
+                source: "../../../../imports/twemoji/svg/1f590.svg"
 
                 MouseArea {
                     cursorShape: Qt.PointingHandCursor

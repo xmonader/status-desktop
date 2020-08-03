@@ -64,7 +64,7 @@ Rectangle {
 
     StyledText {
         id: contactInfo
-        text: wrapper.chatType !== Constants.chatTypePublic ? Emoji.parse(wrapper.name, "26x26") : "#" + wrapper.name
+        text: wrapper.chatType !== Constants.chatTypePublic ? Emoji.parse(wrapper.name, "svg") : "#" + wrapper.name
         anchors.right: contactTime.left
         anchors.rightMargin: Style.current.smallPadding
         elide: Text.ElideRight
@@ -76,7 +76,7 @@ Rectangle {
         anchors.topMargin: !isCompact ? Style.current.smallPadding : 0
         anchors.verticalCenter: !isCompact ? undefined : parent.verticalCenter
     }
-    
+
     StyledText {
         id: lastChatMessage
         visible: !isCompact
@@ -85,7 +85,7 @@ Rectangle {
             switch(contentType){
                 case Constants.imageType: return qsTr("Image");
                 case Constants.stickerType: return qsTr("Sticker");
-                default: return lastMessage ? Emoji.parse(lastMessage, "26x26").replace(/\n|\r/g, ' ') : qsTrId("no-messages")
+                default: return lastMessage ? Emoji.parse(lastMessage, "svg").replace(/\n|\r/g, ' ') : qsTrId("no-messages")
             }
         }
         clip: true // This is needed because emojis don't ellide correctly

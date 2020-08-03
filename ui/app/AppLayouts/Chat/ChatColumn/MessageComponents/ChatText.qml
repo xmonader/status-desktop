@@ -31,7 +31,7 @@ StyledTextEdit {
         if(contentType === Constants.stickerType) return "";
         let msg = Utils.linkifyAndXSS(message);
         if(isEmoji){
-            return Emoji.parse(msg, "72x72");
+            return Emoji.parse(msg, "svg");
         } else {
             return `<html>`+
                 `<head>`+
@@ -55,7 +55,7 @@ StyledTextEdit {
                     `</style>`+
                 `</head>`+
                 `<body>`+
-                    `${Emoji.parse(msg, "26x26")}`+
+                    `${Emoji.parse(msg, "svg")}`+
                 `</body>`+
             `</html>`;
         }

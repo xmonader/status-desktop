@@ -20,7 +20,7 @@ Rectangle {
     function setup(){
         let replyMessageIndex = chatsModel.messageList.getMessageIndex(SelectedMessage.messageId);
         if (replyMessageIndex == -1) return;
-        
+
         userName = chatsModel.messageList.getMessageData(replyMessageIndex, "userName")
         message = chatsModel.messageList.getMessageData(replyMessageIndex, "message")
         identicon = chatsModel.messageList.getMessageData(replyMessageIndex, "identicon")
@@ -99,7 +99,7 @@ Rectangle {
 
     StyledText {
         id: replyText
-        text: Emoji.parse(message, "26x26")
+        text: Emoji.parse(message, "svg")
         anchors.left: replyToUsername.left
         anchors.top: replyToUsername.bottom
         anchors.topMargin: 8
@@ -110,5 +110,5 @@ Rectangle {
         font.pixelSize: 15
         textFormat: Text.RichText
     }
-    
+
 }
