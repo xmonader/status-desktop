@@ -81,6 +81,9 @@ QtObject:
     return self.chatItem.isMember(pubKey)
 
   proc contains*(self: ChatItemView, pubKey: string): bool {.slot.} =
+    echo "chat_item contains"
+    echo pubKey
+    if self.chatItem.isNil: echo "chatItem is nil"
     if self.chatItem.isNil: return false
     return self.chatItem.contains(pubKey)
 

@@ -6,21 +6,22 @@ import "../../../../shared"
 import "./"
 
 Popup {
+    property var channel: ""
     function doRename(){
-        chatsModel.renameGroup(groupName.text)
+        chatsModel.renameGroup(channel.id, groupName.text)
         popup.close();
     }
 
     id: popup
     modal: true
 
-    Overlay.modal: Rectangle {
-        color: "#60000000"
+    function openPopup(channel) {
+        groupName.forceActiveFocus(Qt.MouseFocusReason)
+        groupName.text = channel.name
     }
 
-    onOpened: {
-        groupName.forceActiveFocus(Qt.MouseFocusReason)
-        groupName.text = chatsModel.activeChannel.name
+    Overlay.modal: Rectangle {
+        color: "#60000000"
     }
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
@@ -73,4 +74,5 @@ Popup {
             onClicked : doRename()
         }
   }
+
 }

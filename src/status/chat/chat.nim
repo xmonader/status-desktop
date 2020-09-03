@@ -102,7 +102,10 @@ proc isMember*(self: Chat, pubKey: string): bool =
   return false
 
 proc contains*(self: Chat, pubKey: string): bool =
+  echo "--- checking"
+  echo pubKey
   for member in self.members:
+    echo $member
     if member.id == pubKey: return true
   return false
 

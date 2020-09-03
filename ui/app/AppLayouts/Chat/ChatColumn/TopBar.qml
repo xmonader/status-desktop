@@ -171,7 +171,7 @@ Rectangle {
                     icon.height: chatTopBarContent.iconSize
                     //% "Group Information"
                     text: qsTrId("group-information")
-                    onTriggered: groupInfoPopup.open()
+                    onTriggered: groupInfoPopup.openPopup(chatsModel.activeChannel.id)
                 }
                 Action {
                     icon.source: "../../../img/close.svg"

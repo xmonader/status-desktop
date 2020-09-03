@@ -24,6 +24,7 @@ ScrollView {
         clip: true
         model: chatsModel.chats
         delegate: Channel {
+            channelId: model.id
             name: model.name
             muted: model.muted
             lastMessage: model.lastMessage
@@ -51,9 +52,29 @@ ScrollView {
         }
     }
 
+    ProfilePopup {
+        id: profilePopup
+        height: 330
+        noFooter: true
+    }
+
+    GroupInfoPopup {
+        id: groupInfoPopup
+        profileClick: {
+            profilePopup.openPopup.bind(profilePopup)
+        }
+        onClosed: {
+            mouseArea.menuOpened = false
+        }
+    }
+
     PopupMenu {
         property int channelIndex
         property bool channelMuted
+        property int chatType
+        property string id
+        property string name
+        property string identicon
 
         id: channelContextMenu
         width: 175
@@ -70,19 +91,43 @@ ScrollView {
             }
         ]
 
-        function openMenu(channelIndex, muted) {
+        function openMenu(channelIndex, muted, chatType, id, name, identicon) {
             channelContextMenu.channelIndex = channelIndex
             channelContextMenu.channelMuted = muted
+            channelContextMenu.chatType = chatType
+            channelContextMenu.id = id
+            channelContextMenu.name = name
+            channelContextMenu.identicon = identicon
             channelContextMenu.popup()
         }
 
         Action {
-            //% "View Group"
-            text: qsTrId("view-group")
+            text: {
+                if (channelContextMenu.chatType === Constants.chatTypePublic) {
+                    return qsTrId("share-chat")
+                }
+                if (channelContextMenu.chatType === Constants.chatTypeOneToOne) {
+                    return qsTrId("view-profile")
+                }
+                return qsTrId("view-group")
+            }
             icon.source: "../../../img/group.svg"
             icon.width: 16
             icon.height: 16
-            onTriggered: console.log('TODO View group')
+            onTriggered: {
+                console.log("-------------")
+                console.log(channelContextMenu.id)
+                console.log(channelContextMenu.name)
+                console.log(channelContextMenu.identicon)
+                console.log("-------------")
+                if (channelContextMenu.chatType === Constants.chatTypePublic) {
+                    return console.log("TODO: implement share chat")
+                }
+                if (channelContextMenu.chatType === Constants.chatTypeOneToOne) {
+                    return profilePopup.openPopup(channelContextMenu.name, channelContextMenu.id, channelContextMenu.identicon)
+                }
+                return groupInfoPopup.openPopup(channelContextMenu.id)
+            }
         }
 
         Separator {}

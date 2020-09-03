@@ -10,17 +10,23 @@ ModalPopup {
     property bool addMembers: false
     property int currMemberCount: 1
     property int memberCount: 1
+    property string channelId: ""
     readonly property int maxMembers: 10
     property var pubKeys: []
     property var profileClick: function() {}
+    property var channel: ""
 
-    function resetSelectedMembers(){
+    function resetSelectedMembers(_channel){
         pubKeys = [];
-        memberCount = chatsModel.activeChannel.members.rowCount();
+        memberCount = _channel.members.rowCount();
         currMemberCount = memberCount;
         data.clear();
+        console.log("row count")
+        console.log(profileModel.contactList.rowCount())
         for(let i = 0; i < profileModel.contactList.rowCount(); i++){
-            if(chatsModel.activeChannel.contains(profileModel.contactList.rowData(i, "pubKey"))) continue;
+            console.log("--> " + i)
+            console.log(profileModel.contactList.rowData(i, "pubKey"))
+            if(_channel.contains(profileModel.contactList.rowData(i, "pubKey"))) continue;
             if(profileModel.contactList.rowData(i, "isContact") == "false") continue;
             data.append({
                 name: profileModel.contactList.rowData(i, "name"),
@@ -32,15 +38,25 @@ ModalPopup {
         }
     }
 
-    onOpened: {
+    function openPopup(channelId){
+        this.channelId = channelId
         addMembers = false;
         btnSelectMembers.enabled = false;
-        resetSelectedMembers();
+        chatsModel.setFocusedChannel(channelId)
+        this.channel = chatsModel.getFocusedChannel()
+        popup.channel = chatsModel.getFocusedChannel()
+        console.log(this.channel)
+        console.log(this.channel.id)
+        console.log(this.channel.color)
+        console.log(this.channel.name)
+        console.log(this.channel.contains)
+        popup.open()
+        resetSelectedMembers(this.channel)
     }
 
     function doAddMembers(){
         if(pubKeys.length === 0) return;
-        chatsModel.addGroupMembers(chatsModel.activeChannel.id, JSON.stringify(pubKeys));
+        chatsModel.addGroupMembers(channel !== "" && channel.id, JSON.stringify(pubKeys));
         popup.close();
     }
 
@@ -55,10 +71,10 @@ ModalPopup {
           radius: 50
           anchors.top: parent.top
           anchors.topMargin: Style.current.padding
-          color: chatsModel.activeChannel.color
-  
+          color: (channel && channel !== "" && channel.color) || "red"
+
           StyledText {
-            text: chatsModel.activeChannel.name.charAt(0).toUpperCase();
+            text: channel && channel !== "" && channel.name.charAt(0).toUpperCase();
             opacity: 0.7
             font.weight: Font.Bold
             font.pixelSize: 21
@@ -67,11 +83,11 @@ ModalPopup {
             anchors.verticalCenter: parent.verticalCenter
           }
       }
-    
+
       StyledTextEdit {
           id: groupName
           //% "Add members"
-          text: addMembers ? qsTrId("add-members") : chatsModel.activeChannel.name
+          text: addMembers ? qsTrId("add-members") : (channel && channel !== "" && channel.name)
           anchors.top: parent.top
           anchors.topMargin: 18
           anchors.left: letterIdenticon.right
@@ -106,7 +122,7 @@ ModalPopup {
 
       Rectangle {
             id: editGroupNameBtn
-            visible: !addMembers && chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
+            visible: !addMembers && channel && channel !== "" && channel.isAdmin(profileModel.profile.pubKey)
             height: 24
             width: 24
             anchors.top: parent.top
@@ -135,7 +151,7 @@ ModalPopup {
                 onEntered: {
                     editGroupNameBtn.color = Style.current.grey
                 }
-                onClicked: renameGroupPopup.open()
+                onClicked: renameGroupPopup.openPopup(channel)
             }
         }
 
@@ -229,7 +245,7 @@ ModalPopup {
                                 pubKeys.splice(idx, 1);
                             }
                         }
-                        memberCount = chatsModel.activeChannel.members.rowCount() + pubKeys.length;
+                        memberCount = channel.members.rowCount() + pubKeys.length;
                         btnSelectMembers.enabled = pubKeys.length > 0
                     }
                 }
@@ -291,7 +307,7 @@ ModalPopup {
             Layout.fillWidth: true
             Layout.fillHeight: true
             //model: exampleModel
-            model: chatsModel.activeChannel.members
+            model: ((channel && channel !== "" && channel.members) || [])
             delegate: Row {
                 Column {
                     Image {
@@ -329,7 +345,7 @@ ModalPopup {
                     }
                     StyledText {
                         id: moreActionsBtn
-                        visible: !model.isAdmin && chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
+                        visible: !model.isAdmin && channel !== "" && channel.isAdmin(profileModel.profile.pubKey)
                         text: "..."
                         width: 100
                         MouseArea {
@@ -344,14 +360,14 @@ ModalPopup {
                                     icon.source: "../../../img/make-admin.svg"
                                     //% "Make Admin"
                                     text: qsTrId("make-admin")
-                                    onTriggered: chatsModel.makeAdmin(chatsModel.activeChannel.id,  model.pubKey)
+                                    onTriggered: chatsModel.makeAdmin(channel !== "" && channel.id,  model.pubKey)
                                 }
                                 Action {
                                     icon.source: "../../../img/remove-from-group.svg"
                                     icon.color: Style.current.red
                                     //% "Remove From Group"
                                     text: qsTrId("remove-from-group")
-                                    onTriggered: chatsModel.kickGroupMember(chatsModel.activeChannel.id,  model.pubKey)
+                                    onTriggered: chatsModel.kickGroupMember(channel !== "" && channel.id,  model.pubKey)
                                 }
                             }
                         }
@@ -362,7 +378,7 @@ ModalPopup {
     }
 
     footer: Item {
-        visible: chatsModel.activeChannel.isAdmin(profileModel.profile.pubKey)
+        visible: channel && channel !== "" && channel.isAdmin(profileModel.profile.pubKey)
         width: parent.width
         height: children[0].height
         StyledButton {

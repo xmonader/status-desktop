@@ -35,6 +35,7 @@ QtObject:
       channelOpenTime*: Table[string, int64]
       connected: bool
       unreadMessageCnt: int
+      focusedChatId: string
 
   proc setup(self: ChatsView) = self.QAbstractListModel.setup
 
@@ -97,6 +98,27 @@ QtObject:
 
   QtProperty[QVariant] chats:
     read = getChatsList
+
+  proc setFocusedChannel*(self: ChatsView, chatId: string) {.slot.} =
+    echo("getting channel")
+    echo(chatId)
+    self.focusedChatId = chatId
+
+  # proc getLaid*(self: ChatsView, chatName: string): QVariant =
+  proc getFocusedChannel*(self: ChatsView): QVariant {.slot.} =
+    #   # proc getChannelById*(self: ChatsView, chatId: string): ChatItemView {.slot.} =
+      # echo("getting channel")
+      # echo(chatId)
+    let channel = self.chats.getChannelById(self.focusedChatId)
+    let channelView = newChatItemView(self.status)
+    channelView.setChatItem(channel)
+      # channelView
+    result = newQVariant(channelView)
+    # self.activeChannel
+    # newQVariant(self.chats)
+
+  # QtProperty[QVariant] getChatById:
+  #   read = getChannelById
 
   proc getChannelColor*(self: ChatsView, channel: string): string {.slot.} =
     self.chats.getChannelColor(channel)
@@ -222,6 +244,7 @@ QtObject:
     self.activeChannelChanged()
 
   proc getActiveChannel*(self: ChatsView): QVariant {.slot.} =
+    echo "=== getActiveChannel"
     newQVariant(self.activeChannel)
 
   QtProperty[QVariant] activeChannel:
@@ -415,8 +438,8 @@ QtObject:
         self.currentSuggestions.setNewData(self.status.contacts.getContacts())
     self.calculateUnreadMessages()
 
-  proc renameGroup*(self: ChatsView, newName: string) {.slot.} =
-    self.status.chat.renameGroup(self.activeChannel.id, newName)
+  proc renameGroup*(self: ChatsView, channelId: string, newName: string) {.slot.} =
+    self.status.chat.renameGroup(channelId, newName)
 
   proc blockContact*(self: ChatsView, id: string): string {.slot.} =
     return self.status.contacts.blockContact(id)
