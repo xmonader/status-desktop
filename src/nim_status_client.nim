@@ -1,4 +1,4 @@
-import NimQml, eventemitter, chronicles, os, strformat
+import NimQml, eventemitter, chronicles, os, strformat, threadpool
 
 import app/chat/core as chat
 import app/wallet/core as wallet
@@ -12,10 +12,14 @@ import status/libstatus/types
 import nim_status
 import status/status as statuslib
 
-var signalsQObjPointer: pointer
-
 logScope:
   topics = "main"
+
+var signalsQObjPointer: pointer
+
+let signalsChannelPointer = cast[ptr Channel[string]](
+  allocShared0(sizeof(Channel[string]))
+)
 
 proc mainProc() =
   let status = statuslib.newStatusInstance()
@@ -54,10 +58,8 @@ proc mainProc() =
   elif (defined(linux)):
     i18nPath = joinPath(getAppDir(), "../i18n")
 
-
   let engine = newQQmlApplicationEngine()
   let signalController = signals.newController(status)
-
   # We need this global variable in order to be able to access the application
   # from the non-closure callback passed to `libstatus.setSignalEventCallback`
   signalsQObjPointer = cast[pointer](signalController.vptr)
@@ -117,7 +119,6 @@ proc mainProc() =
     profile.delete()
     utilsController.delete()
 
-
   # Initialize only controllers whose init functions
   # do not need a running node
   proc initControllers() =
@@ -148,20 +149,41 @@ proc mainProc() =
 
   engine.load(newQUrl("qrc:///main.qml"))
 
+  proc signalsWorker(channel: ptr Channel[string]) =
+    while true:
+      if channel[].peek == -1:
+        echo "!!!!!!! CHANNEL CLOSED !!!!!!!"
+        break
+      try:
+        let signal = channel[].recv()
+        spawn signal_handler(signalsQObjPointer, signal, "receiveSignal")
+        echo "SIGNAL RECEIVED FROM CHANNEL: " & signal
+      except:
+        discard
+
   # Please note that this must use the `cdecl` calling convention because
   # it will be passed as a regular C function to libstatus. This means that
   # we cannot capture any local variables here (we must rely on globals)
-  var callback: SignalCallback = proc(p0: cstring) {.cdecl.} =
+  proc callback(signal: cstring) {.cdecl.} =
     setupForeignThreadGc()
-    signal_handler(signalsQObjPointer, p0, "receiveSignal")
+    try:
+      signalsChannelPointer[].send($signal)
+    except:
+      discard
     tearDownForeignThreadGc()
 
-  nim_status.setSignalEventCallback(callback)
+  var signalsThread: Thread[ptr Channel[string]]
 
+  info "Starting application..."
+  signalsChannelPointer[].open()
+  createThread(signalsThread, signalsWorker, signalsChannelPointer)
+  nim_status.setSignalEventCallback(callback)
   # Qt main event loop is entered here
   # The termination of the loop will be performed when exit() or quit() is called
-  info "Starting application..."
   app.exec()
+  signalsChannelPointer[].close()
+  signalsThread.joinThread()
+  deallocShared(signalsChannelPointer)
 
 when isMainModule:
   mainProc()

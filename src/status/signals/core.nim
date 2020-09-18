@@ -6,6 +6,10 @@ import ../status
 logScope:
   topics = "signals"
 
+proc c_free(p: pointer) {.importc: "free", header: "<stdlib.h>".}
+
+proc c_malloc(size: csize_t): pointer {.importc: "malloc", header: "<stdlib.h>".}
+
 QtObject:
   type SignalsController* = ref object of QObject
     variant*: QVariant
@@ -26,7 +30,7 @@ QtObject:
 
   proc processSignal(self: SignalsController, statusSignal: string) =
     var jsonSignal: JsonNode
-    try: 
+    try:
       jsonSignal = statusSignal.parseJson
     except:
       error "Invalid signal received", data = statusSignal
@@ -35,9 +39,9 @@ QtObject:
     let signalString = jsonSignal["type"].getStr
 
     trace "Raw signal data", data = $jsonSignal
-    
+
     var signalType: SignalType
-    
+
     try:
       signalType = parseEnum[SignalType](signalString)
     except:
@@ -68,6 +72,14 @@ QtObject:
 
   proc signalReceived*(self: SignalsController, signal: string) {.signal.}
 
-  proc receiveSignal(self: SignalsController, signal: string) {.slot.} =
+  proc receiveSignal*(self: SignalsController, signal: string) {.slot.} =
+    # var sig = cast[cstring](c_malloc(csize_t signal.cstring.len + 1))
+    # copyMem(sig, signal.cstring, signal.cstring.len)
+    # self.processSignal($signal)
+    # self.signalReceived($signal)
+    # c_free(sig)
+
+    GC_ref signal
     self.processSignal(signal)
     self.signalReceived(signal)
+    GC_unref signal
