@@ -155,6 +155,9 @@ DISTFILES += \
     app/AppLayouts/Chat/components/EmojiSection.qml \
     app/AppLayouts/Chat/components/InviteFriendsPopup.qml \
     app/AppLayouts/Chat/components/MessageContextMenu.qml \
+    app/AppLayouts/Discover/DiscoverLayout.qml \
+    app/AppLayouts/Discover/data/Channels.qml \
+    app/AppLayouts/Discover/qmldir \
     app/AppLayouts/Profile/LeftTab/Constants.js \
     app/AppLayouts/Profile/LeftTab/components/MenuButton.qml \
     app/AppLayouts/Chat/data/EmojiReactions.qml \

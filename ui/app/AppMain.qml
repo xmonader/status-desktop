@@ -34,7 +34,7 @@ RowLayout {
         }
 
         TabButton {
-            id: chatBtn
+            id: discoverBtn
             x: 0
             width: 40
             height: 40
@@ -42,6 +42,34 @@ RowLayout {
             padding: 0
             transformOrigin: Item.Center
             anchors.horizontalCenter: parent.horizontalCenter
+            background: Rectangle {
+                color: Style.current.secondaryBackground
+                opacity: parent.checked ? 1 : 0
+                radius: 50
+            }
+
+            SVGImage {
+                id: discoverImage
+                height: 24
+                width: 24
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                fillMode: Image.PreserveAspectFit
+                source: parent.checked ? "img/discoverActive.svg" : "img/discover.svg"
+            }
+        }
+
+        TabButton {
+            id: chatBtn
+            x: 0
+            width: 40
+            height: 40
+            text: ""
+            padding: 0
+            transformOrigin: Item.Center
+            anchors.topMargin: this.enabled ? 50 : 0
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: discoverBtn.top
             background: Rectangle {
                 color: Style.current.secondaryBackground
                 opacity: parent.checked ? 1 : 0
@@ -59,7 +87,7 @@ RowLayout {
             }
 
             Rectangle {
-                visible: chatsModel.unreadMessagesCount > 0
+                visible: true
                 anchors.top: image.top
                 anchors.left: image.right
                 anchors.leftMargin: -10
@@ -75,7 +103,6 @@ RowLayout {
                     text: chatsModel.unreadMessagesCount
                 }
             }
-
         }
 
         TabButton {
@@ -190,6 +217,13 @@ RowLayout {
         Layout.alignment: Qt.AlignLeft | Qt.AlignTop
         Layout.fillHeight: true
         currentIndex: tabBar.currentIndex
+
+        DiscoverLayout {
+            id: discoverLayoutContainer
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.fillHeight: true
+        }
 
         ChatLayout {
             id: chatLayoutContainer
