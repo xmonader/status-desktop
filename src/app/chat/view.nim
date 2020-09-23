@@ -127,11 +127,13 @@ QtObject:
 
   proc obtainAvailableStickerPacks*(self: ChatsView) =
     spawnAndSend(self, "setAvailableStickerPacks") do:
-      let availableStickerPacks = status_stickers.getAvailableStickerPacks()
-      var packs: seq[StickerPack] = @[]
-      for packId, stickerPack in availableStickerPacks.pairs:
-        packs.add(stickerPack)
-      $(%*(packs))
+      debugEcho ">>> [app/chat/view.obtainAvailableStickerPacks]"
+      {.gcsafe.}:
+        let availableStickerPacks = status_stickers.getAvailableStickerPacks()
+        var packs: seq[StickerPack] = @[]
+        for packId, stickerPack in availableStickerPacks.pairs:
+          packs.add(stickerPack)
+        $(%*(packs))
 
   proc setAvailableStickerPacks*(self: ChatsView, availableStickersJSON: string) {.slot.} =
     let

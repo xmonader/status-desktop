@@ -15,11 +15,13 @@ proc newNetworkModel*(events: EventEmitter): NetworkModel =
 
 proc peerSummaryChange*(self: NetworkModel, peers: seq[string]) =
   if peers.len == 0:
-    self.events.emit("chat:disconnected", Args())
+    self.events.emit("network:disconnected", Args())
   
   if peers.len > 0:
-    self.events.emit("chat:connected", Args())
+    self.events.emit("network:connected", Args())
 
   self.peers = peers
 
 proc peerCount*(self: NetworkModel): int = self.peers.len
+
+proc isConnected*(self: NetworkModel): bool = self.peerCount() > 0

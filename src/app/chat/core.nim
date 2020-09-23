@@ -37,7 +37,14 @@ proc init*(self: ChatController) =
   self.status.mailservers.init()
   self.status.chat.init()
   self.status.stickers.init()
-  self.view.obtainAvailableStickerPacks()
+  # if self.status.network.isConnected:
+  #   debugEcho ">>> [chat/core.init] network connected, obtaining sticker packs"
+  #   self.view.obtainAvailableStickerPacks()
+  # else:
+    # debugEcho ">>> [chat/core.init] network disconnected, setting event to get sticker packs on connection"
+  self.status.events.once("network:connected") do(e: Args):
+    debugEcho ">>> [chat/core.init] network connected event, obtaining sticker packs"
+    self.view.obtainAvailableStickerPacks()
   let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
   self.view.pubKey = pubKey
 

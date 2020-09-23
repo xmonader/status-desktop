@@ -92,6 +92,7 @@ proc getPackCount*(): int =
 # Gets sticker pack data
 proc getPackData*(id: Stuint[256]): StickerPack =
   {.gcsafe.}:
+    debugEcho ">>> [libstatus/stickers.getPackData] 1"
     let
       contract = contracts.getContract("stickers")
       contractMethod = contract.methods["getPackData"]
@@ -100,8 +101,11 @@ proc getPackData*(id: Stuint[256]): StickerPack =
         "to": $contract.address,
         "data": contractMethod.encodeAbi(getPackData)
         }, "latest"]
+    debugEcho ">>> [libstatus/stickers.getPackData] 2"
     let responseStr = status.callPrivateRPC("eth_call", payload)
+    debugEcho ">>> [libstatus/stickers.getPackData] 3"
     let response = Json.decode(responseStr, RpcResponse)
+    debugEcho ">>> [libstatus/stickers.getPackData] 4"
     if not response.error.isNil:
       raise newException(RpcException, "Error getting sticker pack data: " & response.error.message)
 
@@ -196,16 +200,21 @@ proc getRecentStickers*(): seq[Sticker] =
     result.insert(Sticker(hash: $hash, packId: packId), 0)
 
 proc getAvailableStickerPacks*(): Table[int, StickerPack] =
-  var availableStickerPacks = initTable[int, StickerPack]()
-  try: 
-    let numPacks = getPackCount()
-    for i in 0..<numPacks:
-      try:
-        let stickerPack = getPackData(i.u256)
-        availableStickerPacks[stickerPack.id] = stickerPack
-      except:
-        continue
-    result = availableStickerPacks
-  except RpcException:
-    error "Error in getAvailableStickerPacks", message = getCurrentExceptionMsg()
-    result = initTable[int, StickerPack]()
+  {.gcsafe.}:
+    debugEcho ">>> [libstatus/stickers.getAvailableStickers] 1"
+    var availableStickerPacks = initTable[int, StickerPack]()
+    debugEcho ">>> [libstatus/stickers.getAvailableStickers] 2"
+    try: 
+      let numPacks = getPackCount()
+      debugEcho ">>> [libstatus/stickers.getAvailableStickers] numPacks: ", $numPacks
+      for i in 0..<numPacks:
+        try:
+          let stickerPack = getPackData(i.u256)
+          debugEcho ">>> [libstatus/stickers.getAvailableStickers] adding pack data i: ", $i, ", sticker pack: ", $(%stickerPack)
+          availableStickerPacks[stickerPack.id] = stickerPack
+        except:
+          continue
+      result = availableStickerPacks
+    except RpcException:
+      error "Error in getAvailableStickerPacks", message = getCurrentExceptionMsg()
+      result = initTable[int, StickerPack]()

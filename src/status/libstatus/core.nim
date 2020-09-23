@@ -11,17 +11,22 @@ proc callPrivateRPCRaw*(inputJSON: string): string =
   return $nim_status.callPrivateRPC(inputJSON)
 
 proc callPrivateRPC*(methodName: string, payload = %* []): string =
+  debugEcho ">>> [libstatus/core.callPrivateRPC] 1"
   try:
     let inputJSON = %* {
       "jsonrpc": "2.0",
       "method": methodName,
       "params": %payload
     }
+    debugEcho ">>> [libstatus/core.callPrivateRPC] 2"
     debug "callPrivateRPC", rpc_method=methodName
     let response = nim_status.callPrivateRPC($inputJSON)
+    debugEcho ">>> [libstatus/core.callPrivateRPC] 3"
     result = $response
+    debugEcho ">>> [libstatus/core.callPrivateRPC] 4"
     if parseJSON(result).hasKey("error"):
       error "rpc response error", result = result
+    debugEcho ">>> [libstatus/core.callPrivateRPC] 5"
   except Exception as e:
     error "error doing rpc request", methodName = methodName, exception=e.msg
 

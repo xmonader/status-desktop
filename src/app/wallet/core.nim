@@ -65,7 +65,12 @@ proc init*(self: WalletController) =
     self.view.transactionCompleted(tx.success, tx.transactionHash, tx.revertReason)
 
 proc checkPendingTransactions*(self: WalletController) =
-  self.status.wallet.checkPendingTransactions() # TODO: consider doing this in a spawnAndSend
+  # if self.status.network.isConnected:
+  #   self.status.wallet.checkPendingTransactions() # TODO: consider doing this in a spawnAndSend
+  # else:
+  self.status.events.once("network:connected") do(e: Args):
+    debugEcho ">>> [wallet/core.checkPendingTransactions] network connected event, checking pending txs"
+    self.status.wallet.checkPendingTransactions() # TODO: consider doing this in a spawnAndSend
 
 proc start*(self: WalletController) =
   status_wallet.startWallet()
