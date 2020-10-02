@@ -37,6 +37,15 @@ Item {
         id: privateChatPopup
     }
 
+    QuickSearchPopup {
+        id: quickSearchPopup
+    }
+
+    Shortcut {
+        sequence: "Ctrl+K"
+        onActivated: quickSearchPopup.open()
+    }
+
     SearchBox {
         id: searchBox
         anchors.top: title.bottom

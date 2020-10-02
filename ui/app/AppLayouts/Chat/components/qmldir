@@ -12,3 +12,5 @@ StickersPopup 1.0 StickersPopup.qml
 InviteFriendsPopup 1.0 InviteFriendsPopup.qml
 StickerPackIconWithIndicator 1.0 StickerPackIconWithIndicator.qml
 SuggestedChannels 1.0 SuggestedChannels.qml
+QuickSearchPopup 1.0 QuickSearchPopup.qml
+FilterModel 1.0 FilterModel.qml

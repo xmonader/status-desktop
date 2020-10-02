@@ -361,7 +361,7 @@ Rectangle {
         anchors.rightMargin: 0
         ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
         topPadding: Style.current.padding
-        
+
         StyledTArea {
             textFormat: Text.RichText
             id: txtData
