@@ -946,7 +946,15 @@ You may add additional accurate notices of copyright ownership.
         return sendAPIrequest('contact-code');
     };
 
-    var EthereumProvider = function () {};
+    var EthereumProvider = function () {
+        Web3WebsocketProvider.call(this, ...arguments)
+    };
+    // TODO find a way to make sure that this is done AFTER the WebWebsocket is loaded
+    EthereumProvider.prototype = Object.create(Web3WebsocketProvider.prototype);
+    Object.defineProperty(EthereumProvider.prototype, 'constructor', { 
+        value: EthereumProvider, 
+        enumerable: false, // so that it does not appear in 'for in' loop
+        writable: true });
 
     EthereumProvider.prototype.isStatus = true;
     EthereumProvider.prototype.status = new StatusAPI();
@@ -1052,5 +1060,8 @@ You may add additional accurate notices of copyright ownership.
     };
   }
 
-  window.ethereum = new EthereumProvider();
+  // TODO find a way to make sure that this is done AFTER the WebWebsocket is loaded
+  // This is a bogus URL 
+  window.ethereum = new EthereumProvider("ws://status.im");
+  
 })();
