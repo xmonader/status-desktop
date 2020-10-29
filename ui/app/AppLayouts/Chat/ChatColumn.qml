@@ -265,12 +265,14 @@ StackLayout {
             selectRecipient.selectedType: RecipientSelector.Type.Contact
             selectRecipient.readOnly: true
             onReset: {
-                selectRecipient.selectedRecipient = {
-                    address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
-                    identicon: chatsModel.activeChannel.identicon,
-                    name: chatsModel.activeChannel.name,
-                    type: RecipientSelector.Type.Contact
-                }
+                selectRecipient.selectedRecipient = Qt.binding(function() {
+                    return {
+                        address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
+                        identicon: chatsModel.activeChannel.identicon,
+                        name: chatsModel.activeChannel.name,
+                        type: RecipientSelector.Type.Contact
+                    }
+                })
                 selectRecipient.selectedType = RecipientSelector.Type.Contact
                 selectRecipient.readOnly = true
             }
@@ -298,12 +300,14 @@ StackLayout {
             selectRecipient.selectedType: RecipientSelector.Type.Contact
             selectRecipient.readOnly: true
             onReset: {
-                selectRecipient.selectedRecipient = {
-                    address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
-                    identicon: chatsModel.activeChannel.identicon,
-                    name: chatsModel.activeChannel.name,
-                    type: RecipientSelector.Type.Contact
-                }
+                selectRecipient.selectedRecipient = Qt.binding(function() {
+                    return {
+                        address: Constants.zeroAddress, // Setting as zero address since we don't have the address yet
+                        identicon: chatsModel.activeChannel.identicon,
+                        name: chatsModel.activeChannel.name,
+                        type: RecipientSelector.Type.Contact
+                    }
+                })
                 selectRecipient.selectedType = RecipientSelector.Type.Contact
                 selectRecipient.readOnly = true
             }
@@ -329,15 +333,29 @@ StackLayout {
             selectRecipient.selectedType: RecipientSelector.Type.Address
             onReset: {
                 selectRecipient.readOnly = true
-                selectRecipient.selectedRecipient = {
-                    address: "",
-                    identicon: chatsModel.activeChannel.identicon,
-                    name: chatsModel.activeChannel.name,
-                    type: RecipientSelector.Type.Address,
-                    ensVerified: true
-                }
+                selectRecipient.selectedRecipient = Qt.binding(function() {
+                    return {
+                        address: "",
+                        identicon: chatsModel.activeChannel.identicon,
+                        name: chatsModel.activeChannel.name,
+                        type: RecipientSelector.Type.Address,
+                        ensVerified: true
+                    }
+                })
                 selectRecipient.selectedType = RecipientSelector.Type.Address
             }
+        }
+    }
+
+    Connections {
+        target: chatsModel
+        onActiveChannelChanged: {
+            if (!txModalLoader.item) {
+                return
+            }
+            console.log(">>> [ChatColumn.onActiveChannelChanged] activeChannel:", JSON.stringify(chatsModel.activeChannel))
+            txModalLoader.item.selectRecipient.selectedRecipient.identicon = chatsModel.activeChannel.identicon
+            txModalLoader.item.selectRecipient.selectedRecipient.name = chatsModel.activeChannel.name
         }
     }
 }

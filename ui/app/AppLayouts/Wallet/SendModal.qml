@@ -92,7 +92,10 @@ ModalPopup {
                     contacts = Qt.binding(function() { return profileModel.addedContacts })
                     selectedRecipient = undefined
                 }
-                onSelectedRecipientChanged: if (isValid) { gasSelector.estimateGas() }
+                onSelectedRecipientChanged: {
+                    console.log(">>> [SendModal.onSelectedRecipientChanged] selectedRecipient:", JSON.stringify(selectedRecipient))
+                    if (isValid) { gasSelector.estimateGas() }
+                }
             }
         }
         TransactionFormGroup {
