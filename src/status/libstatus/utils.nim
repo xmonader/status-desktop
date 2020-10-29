@@ -61,22 +61,36 @@ proc wei2Eth*(input: Stuint[256], decimals: int = 18): string =
 
   fmt"{eth}.{leading_zeros}{remainder}"
 
+proc parseJsVal(input: string): StUInt[256] =
+  if not input.contains("e+"):
+    return input.u256
+
+  let
+    inputSplit = input.split("e+")
+    prefixStr = inputSplit[0] # ie 1.111
+  var
+    remainderDecimals = inputSplit[1].parseInt # ie 21
+    prefix: StUInt[256]
+
+  if prefixStr.contains("."): # ie 1.111
+    let
+      prefixSplit = prefixStr.split(".")
+      prefixDecimals = prefixSplit[1].len # ie 3
+    remainderDecimals -= prefixDecimals # ie 18
+    prefix = u256(prefixSplit.join("")) # ie 1111
+  else:
+    prefix = prefixStr.u256
+  
+  let remainder = u256(10).pow(remainderDecimals)
+  result = prefix * remainder
+
 proc wei2Eth*(input: string, decimals: int): string =
   try:
-    var input256: Stuint[256]
-    if input.contains("e+"): # we have a js string BN, ie 1e+21
-      let
-        inputSplit = input.split("e+")
-        whole = inputSplit[0].u256
-        remainder = u256(10).pow(inputSplit[1].parseInt)
-      input256 = whole * remainder
-    else:
-      input256 = input.u256
+    var input256: Stuint[256] = parseJsVal(input)
     result = wei2Eth(input256, decimals)
   except Exception as e:
-    error "Error parsing this wei value", input, msg=e.msg
+    error "Error parsing wei value", input, decimals, msg=e.msg
     result = "0"
-  
 
 proc first*(jArray: JsonNode, fieldName, id: string): JsonNode =
   if jArray == nil:
