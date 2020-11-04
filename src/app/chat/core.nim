@@ -35,11 +35,12 @@ proc init*(self: ChatController) =
   self.handleChatEvents()
   self.handleSignals()
 
-  self.status.mailservers.init()
-  self.status.chat.init()
-  self.status.stickers.init()
   let pubKey = status_settings.getSetting[string](Setting.PublicKey, "0x0")
+  echo "PUBKEY: ", pubkey
   self.view.pubKey = pubKey
+  self.status.mailservers.init()
+  self.status.chat.init(pubKey)
+  self.status.stickers.init()
 
   let recentStickers = self.status.stickers.getRecentStickers()
   for sticker in recentStickers:

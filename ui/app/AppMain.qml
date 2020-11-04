@@ -5,6 +5,7 @@ import "../imports"
 import "../shared"
 import "../shared/status"
 import "./AppLayouts"
+import "./AppLayouts/ProfileUpdates"
 import "./AppLayouts/Wallet"
 
 RowLayout {
@@ -61,9 +62,22 @@ RowLayout {
         }
 
         StatusIconTabButton {
-              id: chatBtn
+              id: profileUpdatesBtn
               anchors.horizontalCenter: parent.horizontalCenter
+              icon.name: "status-updates"
+              enabled: isExperimental === "1" || appSettings.statusUpdatesEnabled
+              anchors.top: parent.top
+              anchors.topMargin: 0
+              visible: this.enabled
+              height: this.enabled ? 40 : 0
+        }
+
+        StatusIconTabButton {
+              id: chatBtn
               icon.name: "message"
+              anchors.top: profileUpdatesBtn.enabled ? profileUpdatesBtn.top : parent.top
+              anchors.topMargin: profileUpdatesBtn.enabled ? 50 : 0
+              anchors.horizontalCenter: parent.horizontalCenter
 
               Rectangle {
                   visible: chatsModel.unreadMessagesCount > 0
@@ -109,7 +123,7 @@ RowLayout {
 
         StatusIconTabButton {
               id: profileBtn
-              anchors.top: browserBtn.top
+              anchors.top: browserBtn.enabled ? browserBtn.top : walletBtn.top
               anchors.topMargin: 50
               anchors.horizontalCenter: parent.horizontalCenter
               icon.name: "profile"
@@ -171,6 +185,13 @@ RowLayout {
             if(this.children[currentIndex] === browserLayoutContainer && browserLayoutContainer.active == false){
                 browserLayoutContainer.active = true;
             }
+        }
+
+        ProfileUpdatesLayout {
+            id: profileUpdatesLayoutContainer
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+            Layout.fillHeight: true
         }
 
         ChatLayout {

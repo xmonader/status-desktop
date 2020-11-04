@@ -8,7 +8,7 @@ Rectangle {
     property int menuItemId: -1
     property bool hovered: false
     property bool active: false
-    property url source: "../../../../img/add_watch_only.svg"
+    property url source: ""
     property string text: "My Profile"
     property var onClicked: function () {}
 
@@ -30,11 +30,12 @@ Rectangle {
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
         fillMode: Image.PreserveAspectFit
+        visible: !!source.toString()
     }
 
     StyledText {
         text: menuButton.text
-        anchors.left: iconImage.right
+        anchors.left: iconImage.visible ? iconImage.right : parent.left
         anchors.leftMargin: Style.current.padding
         anchors.verticalCenter: parent.verticalCenter
     }

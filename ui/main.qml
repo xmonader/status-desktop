@@ -74,6 +74,7 @@ ApplicationWindow {
         property var profileSplitView
         property bool walletEnabled: false
         property bool browserEnabled: false
+        property bool statusUpdatesEnabled: true
         property bool displayChatImages: false
         property bool compactMode
         property string locale: "en"

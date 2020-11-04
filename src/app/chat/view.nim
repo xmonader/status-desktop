@@ -188,7 +188,7 @@ QtObject:
   proc plainText(self: ChatsView, input: string): string {.slot.} =
     result = plain_text(input)
 
-  proc sendMessage*(self: ChatsView, message: string, replyTo: string, contentType: int = ContentType.Message.int) {.slot.} =
+  proc sendMessage*(self: ChatsView, message: string, replyTo: string, contentType: int = ContentType.Message.int, isStatusUpdate: bool = false) {.slot.} =
     let aliasPattern = re(r"(@[A-z][a-z]* [A-z][a-z]* [A-z][a-z]*)", flags = {reStudy, reIgnoreCase})
     let ensPattern = re(r"(@\w*(?=\.stateofus\.eth))", flags = {reStudy, reIgnoreCase})
     let namePattern = re(r"(@\w*)", flags = {reStudy, reIgnoreCase})
@@ -202,7 +202,12 @@ QtObject:
     var m = self.replaceMentionsWithPubKeys(aliasMentions, contacts, message, (c => c.alias))
     m = self.replaceMentionsWithPubKeys(ensMentions, contacts, m, (c => c.ensName))
     m = self.replaceMentionsWithPubKeys(nameMentions, contacts, m, (c => c.ensName.split(".")[0]))
-    self.status.chat.sendMessage(self.activeChannel.id, m, replyTo, contentType)
+
+    var channelId = self.activeChannel.id
+    if isStatusUpdate:
+      channelId = "@" & self.pubKey
+
+    self.status.chat.sendMessage(channelId, m, replyTo, contentType)
 
   proc verifyMessageSent*(self: ChatsView, data: string) {.slot.} =
     let messageData = data.parseJson
@@ -340,12 +345,14 @@ QtObject:
 
   proc pushMessages*(self:ChatsView, messages: var seq[Message]) =
     for msg in messages.mitems:
-      self.upsertChannel(msg.chatId)
+      if msg.chatId != "@" & self.pubKey:
+        echo "WOOOOOPS >>>>>>>>>>>>>>>>>>>>"
+        self.upsertChannel(msg.chatId)
       msg.alias = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
       self.messageList[msg.chatId].add(msg)
       self.messagePushed()
       if self.channelOpenTime.getOrDefault(msg.chatId, high(int64)) < msg.timestamp.parseFloat.fromUnixFloat.toUnix:
-        if msg.chatId != self.activeChannel.id:
+        if msg.chatId != self.activeChannel.id and msg.chatId != "@" & self.pubKey:
           let channel = self.chats.getChannelById(msg.chatId)
           if not channel.muted:
             self.messageNotificationPushed(msg.chatId, msg.text, msg.messageType, channel.chatType.int, msg.timestamp, msg.identicon, msg.alias, msg.hasMention)

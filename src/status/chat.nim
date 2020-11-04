@@ -1,4 +1,4 @@
-import json, strutils, sequtils, tables, chronicles, times
+import json, strutils, sequtils, tables, chronicles, times, sugar
 import libstatus/chat as status_chat
 import libstatus/mailservers as status_mailservers
 import libstatus/chatCommands as status_chat_commands
@@ -121,8 +121,13 @@ proc updateContacts*(self: ChatModel, contacts: seq[Profile]) =
     self.contacts[c.id] = c
   self.events.emit("chatUpdate", ChatUpdateArgs(contacts: contacts))
 
-proc init*(self: ChatModel) =
-  let chatList = status_chat.loadChats()
+proc init*(self: ChatModel, pubKey: string) =
+  var chatList = status_chat.loadChats()
+  if chatList.filter(c => c.id == "@" & pubKey).len == 0:
+    echo "ADDING UPDATES CHANNEL"
+    var statusUpdatesChannel = newChat("@" & pubKey, ChatType.Public)
+    self.join(statusUpdatesChannel.id, statusUpdatesChannel.chatType)
+    chatList.add(statusUpdatesChannel)
 
   var filters:seq[JsonNode] = @[]
   for chat in chatList:
