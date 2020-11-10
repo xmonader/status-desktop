@@ -61,6 +61,15 @@ SplitView {
                         Layout.fillWidth: true
                         onClicked: function () {
                             profileUpdatesMenu.profileUpdatesCurrentIndex = modelData.id
+                            switch(modelData.id) {
+                                case MenuData.TIMELINE:
+                                  chatsModel.setActiveChannelToTimeline()
+                                  break;
+                                case MenuData.MY_STATUS:
+                                  chatsModel.setActiveChannelToStatusUpdates()
+                                  break;
+
+                            }
                         }
                     }
                 }

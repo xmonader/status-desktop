@@ -1,20 +1,19 @@
 import QtQuick 2.13
 import QtQuick.Layouts 1.13
 import QtGraphicalEffects 1.13
+import "../../Chat/ChatColumn"
 import "../../../../imports"
 import "../../../../shared"
 
-Item {
+RowLayout {
     height: parent.height
     Layout.fillWidth: true
+    Layout.fillHeight: true
+    Layout.alignment: Qt.AlignLeft | Qt.AlignTop
+    spacing: 0
 
-    StyledText {
-        id: title
-        text: qsTr("Timeline")
-        anchors.top: parent.top
-        anchors.topMargin: Style.current.padding
-        anchors.horizontalCenter: parent.horizontalCenter
-        font.weight: Font.Bold
-        font.pixelSize: 17
+    ChatMessages {
+        id: chatMessages
+        messageList: chatsModel.messageList
     }
 }

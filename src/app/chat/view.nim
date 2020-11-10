@@ -33,6 +33,7 @@ QtObject:
       callResult: string
       messageList*: Table[string, ChatMessageList]
       activeChannel*: ChatItemView
+      previousActiveChannelIndex: int
       stickerPacks*: StickerPackList
       recentStickers*: StickerList
       replyTo: string
@@ -68,6 +69,7 @@ QtObject:
     result.unreadMessageCnt = 0
     result.pubKey = ""
     result.loadingMessages = false
+    result.previousActiveChannelIndex = -1
     result.setup()
 
   proc oldestMessageTimestampChanged*(self: ChatsView) {.signal.}
@@ -251,13 +253,28 @@ QtObject:
     let selectedChannel = self.chats.getChannel(channelIndex)
     if (selectedChannel == nil): return
     discard self.status.chat.markAllChannelMessagesRead(selectedChannel.id)
+ 
+  proc getActiveChannelIdx(self: ChatsView): int =
+    self.chats.chats.findIndexById(self.activeChannel.id)
+
+  proc getActiveChannelIdxAsQVariant(self: ChatsView): QVariant {.slot.} =
+    newQVariant(self.chats.chats.findIndexById(self.activeChannel.id))
+
+  QtProperty[QVariant] activeChannelIndex:
+    read = getActiveChannelIdxAsQVariant
+    write = setActiveChannelByIndex
+    notify = activeChannelChanged
 
   proc setActiveChannelByIndex*(self: ChatsView, index: int) {.slot.} =
     if(self.chats.chats.len == 0): return
+
     if(not self.activeChannel.chatItem.isNil and self.activeChannel.chatItem.unviewedMessagesCount > 0):
       var response = self.status.chat.markAllChannelMessagesRead(self.activeChannel.id)
       if not response.hasKey("error"):
         self.chats.clearUnreadMessagesCount(self.activeChannel.chatItem)
+
+    let prevIndex = self.chats.chats.findIndexById(self.activeChannel.id)
+    if prevIndex > -1: self.previousActiveChannelIndex = prevIndex
     let selectedChannel = self.chats.getChannel(index)
     if self.activeChannel.id == selectedChannel.id: return
 
@@ -267,13 +284,28 @@ QtObject:
     self.activeChannel.setChatItem(selectedChannel)
     self.status.chat.setActiveChannel(selectedChannel.id)
 
-  proc getActiveChannelIdx(self: ChatsView): QVariant {.slot.} =
-    newQVariant(self.chats.chats.findIndexById(self.activeChannel.id))
+  proc setActiveChannelByIndexExcludeStatusUpdates*(self: ChatsView, index: int): int {.slot.} =
+    let channelsLen = self.chats.chats.len
+    if(channelsLen == 0 or index == -1): return
+    var i = index
+    let selectedChannel = self.chats.getChannel(i)
+    
+    if selectedChannel.id == "@" & self.pubKey:
+      if channelsLen == 1: return
+      if channelsLen > i+1:
+        i = index + 1
+      elif i > 0:
+        i = index - 1
 
-  QtProperty[QVariant] activeChannelIndex:
-    read = getActiveChannelIdx
-    write = setActiveChannelByIndex
-    notify = activeChannelChanged
+    result = i
+    self.setActiveChannelByIndex(i)
+
+  proc setPreviousActiveChannel*(self: ChatsView) {.slot.} =
+    if self.activeChannel.id == "@" & self.pubKey:
+      self.activeChannel.chatItem = nil
+      self.activeChannelChanged()
+
+    discard self.setActiveChannelByIndexExcludeStatusUpdates(self.previousActiveChannelIndex)
 
   proc getNumInstalledStickerPacks(self: ChatsView): QVariant {.slot.} =
     newQVariant(self.status.stickers.installedStickerPacks.len)
@@ -320,6 +352,15 @@ QtObject:
     write = setActiveChannel
     notify = activeChannelChanged
 
+  proc setActiveChannelToStatusUpdates*(self: ChatsView) {.slot.} =
+    let prevIndex = self.chats.chats.findIndexById(self.activeChannel.id)
+    if prevIndex > -1: self.previousActiveChannelIndex = prevIndex
+    self.setActiveChannel("@" & self.pubKey)
+
+  proc setActiveChannelToTimeline*(self: ChatsView) {.slot.} =
+    let prevIndex = self.chats.chats.findIndexById(self.activeChannel.id)
+    if prevIndex > -1: self.previousActiveChannelIndex = prevIndex
+    self.setActiveChannel("@timeline")
 
   proc getCurrentSuggestions(self: ChatsView): QVariant {.slot.} =
     return newQVariant(self.currentSuggestions)
@@ -346,8 +387,10 @@ QtObject:
   proc pushMessages*(self:ChatsView, messages: var seq[Message]) =
     for msg in messages.mitems:
       if msg.chatId != "@" & self.pubKey:
-        echo "WOOOOOPS >>>>>>>>>>>>>>>>>>>>"
         self.upsertChannel(msg.chatId)
+      elif not self.messageList.hasKey(msg.chatId):
+        self.messageList[msg.chatId] = newChatMessageList(msg.chatId, self.status)
+
       msg.alias = self.status.chat.getUserName(msg.fromAuthor, msg.alias)
       self.messageList[msg.chatId].add(msg)
       self.messagePushed()

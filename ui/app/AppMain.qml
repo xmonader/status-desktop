@@ -70,6 +70,10 @@ RowLayout {
               anchors.topMargin: 0
               visible: this.enabled
               height: this.enabled ? 40 : 0
+              onClicked: {
+                  chatsModel.setActiveChannelToStatusUpdates()
+                  profileUpdatesMenu.profileUpdatesCurrentIndex = 1
+              }
         }
 
         StatusIconTabButton {
@@ -96,6 +100,9 @@ RowLayout {
                       anchors.centerIn: parent
                       text: chatsModel.unreadMessagesCount
                   }
+              }
+              onClicked: {
+                  chatsModel.setPreviousActiveChannel()
               }
         }
 

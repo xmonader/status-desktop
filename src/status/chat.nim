@@ -125,9 +125,13 @@ proc init*(self: ChatModel, pubKey: string) =
   var chatList = status_chat.loadChats()
   if chatList.filter(c => c.id == "@" & pubKey).len == 0:
     echo "ADDING UPDATES CHANNEL"
-    var statusUpdatesChannel = newChat("@" & pubKey, ChatType.Public)
+    var statusUpdatesChannel = newChat("@" & pubKey, ChatType.Profile)
     self.join(statusUpdatesChannel.id, statusUpdatesChannel.chatType)
     chatList.add(statusUpdatesChannel)
+  if chatList.filter(c => c.id == "@timeline").len == 0:
+    var timelineChannel = newChat("@timeline", ChatType.Timeline)
+    self.join(timelineChannel.id, timelineChannel.chatType)
+    chatList.add(timelineChannel)
 
   var filters:seq[JsonNode] = @[]
   for chat in chatList:

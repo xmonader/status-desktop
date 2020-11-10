@@ -47,6 +47,7 @@ proc sortChats(x, y: Chat): int =
 proc loadChats*(): seq[Chat] =
   result = @[]
   let jsonResponse = parseJson($callPrivateRPC("chats".prefix))
+  echo "CHATS: ", $jsonResponse
   if jsonResponse["result"].kind != JNull:
     for jsonChat in jsonResponse{"result"}:
       let chat = jsonChat.toChat
@@ -63,7 +64,9 @@ proc chatMessages*(chatId: string, cursor: string = ""): (string, seq[Message]) 
   else:
     cursorVal = newJString(cursor)
 
-  let rpcResult = parseJson(callPrivateRPC("chatMessages".prefix, %* [chatId, cursorVal, 20]))["result"]
+  let res = callPrivateRPC("chatMessages".prefix, %* [chatId, cursorVal, 20])
+  echo "MESSAGES: ", $res
+  let rpcResult = parseJson(res)["result"]
   if rpcResult["messages"].kind != JNull:
     for jsonMsg in rpcResult["messages"]:
       messages.add(jsonMsg.toMessage)

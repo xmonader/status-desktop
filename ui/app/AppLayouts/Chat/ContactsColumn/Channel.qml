@@ -32,7 +32,7 @@ Rectangle {
     anchors.left: parent.left
     radius: 8
     // Hide the box if it is filtered out
-    property bool isVisible: (searchStr == "" || name.includes(searchStr)) && chatId != "@" + profileModel.profile.pubKey
+    property bool isVisible: (searchStr == "" || name.includes(searchStr)) && chatId != "@" + profileModel.profile.pubKey && chatId != "@timeline"
     visible: isVisible ? true : false
     height: isVisible ? !isCompact ? 64 : contactImage.height + Style.current.smallPadding * 2 : 0
 
@@ -187,8 +187,8 @@ Rectangle {
                 channelContextMenu.openMenu(index, muted, chatType, name, chatId, identicon)
                 return;
             }
-            chatsModel.setActiveChannelByIndex(index)
-            chatGroupsListView.currentIndex = index
+            let newIndex = chatsModel.setActiveChannelByIndexExcludeStatusUpdates(index)
+            chatGroupsListView.currentIndex = newIndex
         }
     }
 
