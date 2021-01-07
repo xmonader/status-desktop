@@ -62,9 +62,9 @@
                 
 
                 // ignore older invalid messages
-                if (message.type === undefined) {
-                    return
-                }
+                // if (message.type === undefined) {
+                    // return
+                // }
 
                 if (triggerNewMessages !== undefined) {
                     shouldTriggerNewMessages = triggerNewMessages
@@ -134,7 +134,7 @@
 
             window.pluginOnAllMessages = function(messages) {
                 try {
-                    alert(messages)
+                    // alert(messages)
                     const messagesJSON = JSON.parse(messages)
                     for (let message of messagesJSON) {
                         pluginOnMessage(message, false)
