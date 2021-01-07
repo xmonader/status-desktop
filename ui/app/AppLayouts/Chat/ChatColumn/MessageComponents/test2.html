@@ -25,8 +25,16 @@
                 document.getElementById("msgs").appendChild(newContent)
             }
 
+            let state = "initial"
+            let player_1 = null
+            let player_2 = null
+            let player_1_play = ""
+            let player_2_play = ""
+            let shouldTriggerNewMessages = true
+
             function joinGame() {
                 // alert("joining game")
+                if (!shouldTriggerNewMessages) return
                 window.sendMessage({type: "join"})
             }
 
@@ -34,26 +42,27 @@
 
             function playHand(choice) {
                 choosen_hand = choice
+                if (!shouldTriggerNewMessages) return
                 window.sendMessage({type: "play", hand: hash(choice)})
             }
 
             function revealHand() {
+                if (!shouldTriggerNewMessages) return
                 window.sendMessage({type: "reveal", hand: choosen_hand})
             }
 
-            // states:
-            // * waiting for players
-            // * waiting for moves
-            // * reveal results
-
-            let state = "initial"
-            let player_1 = null
-            let player_2 = null
-            let player_1_play = ""
-            let player_2_play = ""
-
-            window.pluginOnMessage = function(_message) {
+            // don't want to trigger newMessages if it's just recovering state
+            window.pluginOnMessage = function(_message, triggerNewMessages) {
                 let message = JSON.parse(_message)
+
+                // ignore older invalid messages
+                if (message.type === undefined) {
+                    return
+                }
+
+                if (triggerNewMessages !== undefined) {
+                    shouldTriggerNewMessages = triggerNewMessages
+                }
 
                 if (state === "initial") {
                     if (message.data.type === "join") {
@@ -116,11 +125,21 @@
                 // console.log("-------")
                 // console.log(message.data)
             }
+
             window.pluginOnAllMessages = function(messages) {
-                // for (let message of messages) {
-                    // pluginOnMessage(message)
-                // }
+                try {
+                    const messagesJSON = JSON.parse(messages)
+                    for (let message of messages) {
+                        pluginOnMessage(message, false)
+                    }
+                    // Only send the last one
+                    // pluginOnMessage(messagesJSON[messagesJSON.length - 1])
+                } catch (e) {
+                    alert ('Error parsing messages ' + e)
+                    return
+                }
             }
+
         </script>
     </head>
         <div id="state">waiting to someone to join...</div>
