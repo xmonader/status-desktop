@@ -473,6 +473,10 @@ if (typeof module === 'object') {
         // plugin.postMessage();
     }
 
+    window.sendMessage = function(msg) {
+        plugin.postMessage(msg)
+    }
+
     window.toColor = function(color) {
         bridgeSend(color)
     }

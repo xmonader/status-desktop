@@ -75,8 +75,8 @@ WebEngineView {
     id: testWebEngineView
     focus: true
     // url: "https://dap.ps/"
-    url: "./test.html"
-    // url: "./test2.html"
+    // url: "./test.html"
+    url: "./test2.html"
 
     webChannel: pluginChannel
     // property QtObject otrProfile: WebEngineProfile {
@@ -131,7 +131,10 @@ WebEngineView {
 
         function postMessage(data) {
             let pluginInit = JSON.parse(plainText.split("|")[1])
-            chatsModel.sendPluginMessage(JSON.stringify({id: pluginInit.id, msg: data}));
+            console.log("sending message")
+            console.log(JSON.stringify({id: pluginInit.id, msg: data}))
+            chatsModel.sendPluginMessage(JSON.stringify({id: pluginInit.id, msg: data})); // console.log("hi there")
+            // pluginResponse("hi")
         }
     }
 

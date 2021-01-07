@@ -1,12 +1,112 @@
 <html>
     <head>
         <script>
+            var hash = function (s) {
+                /* Simple hash function. */
+                var a = 1, c = 0, h, o;
+                if (s) {
+                    a = 0;
+                    /*jshint plusplus:false bitwise:false*/
+                    for (h = s.length - 1; h >= 0; h--) {
+                        o = s.charCodeAt(h);
+                        a = (a << 6 & 268435455) + o + (o << 14);
+                        c = a & 266338304;
+                        a = c !== 0 ? a ^ c >> 21 : a;
+                    }
+                }
+                return String(a);
+            };
+
+            function appendMessage(msg) {
+                const newDiv = document.createElement("div");
+                newDiv.style.display = 'block'
+                newDiv.style.height = '20px'
+                const newContent = document.createTextNode(msg);
+                document.getElementById("msgs").appendChild(newContent)
+            }
+
+            function joinGame() {
+                // alert("joining game")
+                window.sendMessage({type: "join"})
+            }
+
+            let choosen_hand = ""
+
+            function playHand(choice) {
+                choosen_hand = choice
+                window.sendMessage({type: "play", hand: hash(choice)})
+            }
+
+            function revealHand() {
+                window.sendMessage({type: "reveal", hand: choosen_hand})
+            }
+
+            // states:
+            // * waiting for players
+            // * waiting for moves
+            // * reveal results
+
+            let state = "initial"
+            let player_1 = null
+            let player_2 = null
+            let player_1_play = ""
+            let player_2_play = ""
+
             window.pluginOnMessage = function(_message) {
                 let message = JSON.parse(_message)
 
-                const newDiv = document.createElement("div");
-                const newContent = document.createTextNode(message.username + " has joined the game");
-                document.getElementById("msgs").appendChild(newContent)
+                if (state === "initial") {
+                    if (message.data.type === "join") {
+                        if (player_1 === null) {
+                            player_1 = message.username
+                            appendMessage(message.username + " has joined the game (1st player)");
+                        } else if (player_2 === null) {
+                            player_2 = message.username
+                            appendMessage(message.username + " has joined the game (2nd player)");
+                            state = "game_start"
+                        } else {
+                            // game already has 2 players
+                            return
+                        }
+                    }
+                } else if (state === "game_start") {
+                    if (message.username !== player_1 && message.username !== player_2) {
+                        // alert(player_1)
+                        // alert(player_2)
+                        alert("not the right players")
+                        // not the right players
+                        return
+                    }
+                    if (message.data.type === "play") {
+                        if (player_1_play === "" && message.username === player_1) {
+                            player_1_play = message.data.hand
+                            // appendMessage(message.username + " played " + message.data.hand);
+                            appendMessage(message.username + " played");
+                        }
+                        else if (player_2_play === "" && message.username === player_2) {
+                            player_2_play = message.data.hand
+                            appendMessage(message.username + " played");
+                        }
+                        if (player_1_play !== "" && player_2_play !== "") {
+                            appendMessage("revealing hands")
+                            state = "revealing_hands"
+                            revealHand()
+                        }
+                    }
+                } else if (state === "revealing_hands") {
+                    if (message.username !== player_1 && message.username !== player_2) {
+                        return
+                    }
+                    if (message.username === player_1) {
+                        if (hash(message.data.hand) === player_1_play) {
+                            appendMessage(message.username + " revealed " + message.data.hand);
+                        }
+                    } else if (message.username === player_2) {
+                        if (hash(message.data.hand) === player_2_play) {
+                            appendMessage(message.username + " revealed " + message.data.hand);
+                        }
+                    }
+                }
                 // if (data === "red") {
                 //     document.getElementsByClassName("mybutton")[0].style.backgroundColor = "red";
                 // }
@@ -26,8 +126,9 @@
         <div id="state">waiting to someone to join...</div>
         <div id="msgs">
         </div>
-        <button class="mybutton" onClick="javascript:hello()">hello</button>
-        <button class="mybutton" onClick="javascript:toColor('red')">change to red</button>
-        <button class="mybutton" onClick="javascript:toColor('blue')">change to blue</button>
+        <button class="mybutton" onClick="javascript:joinGame()">join</button>
+        <button class="mybutton" onClick="javascript:playHand('rock')">rock</button>
+        <button class="mybutton" onClick="javascript:playHand('paper')">paper</button>
+        <button class="mybutton" onClick="javascript:playHand('scissors')">scissors</button>
     </body>
 </html>
