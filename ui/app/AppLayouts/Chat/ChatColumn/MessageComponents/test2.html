@@ -53,7 +53,13 @@
 
             // don't want to trigger newMessages if it's just recovering state
             window.pluginOnMessage = function(_message, triggerNewMessages) {
-                let message = JSON.parse(_message)
+                let message;
+                if (typeof _message === "string") {
+                    message = JSON.parse(_message)
+                } else {
+                    message = _message
+                }
+                
 
                 // ignore older invalid messages
                 if (message.type === undefined) {
@@ -128,12 +134,11 @@
 
             window.pluginOnAllMessages = function(messages) {
                 try {
+                    alert(messages)
                     const messagesJSON = JSON.parse(messages)
-                    for (let message of messages) {
+                    for (let message of messagesJSON) {
                         pluginOnMessage(message, false)
                     }
-                    // Only send the last one
-                    // pluginOnMessage(messagesJSON[messagesJSON.length - 1])
                 } catch (e) {
                     alert ('Error parsing messages ' + e)
                     return
