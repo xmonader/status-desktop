@@ -27,6 +27,8 @@ WebEngineView {
         const messagesForPlugin = []
         let message
         let messageJSON
+        let localName
+        let username
 
         let currentObj
         for (let i = 0; i < nb; i++) {
@@ -42,6 +44,20 @@ WebEngineView {
                     currentObj.timestamp = messageList.getMessageData(i, "timestamp")
                     currentObj.name = messageJSON.name
                     currentObj.data = messageJSON.msg
+
+                    localName = messageList.getMessageData(i, "localName")
+                    if (localName !== "") {
+                        currentObj.username = localName
+                    } else {
+                        username = messageList.getMessageData(i, "username")
+                        if (userName !== "") {
+                            currentObj.username = Utils.removeStatusEns(userName)
+                        } else {
+                            currentObj.username = Utils.removeStatusEns(messageList.getMessageData(i, "alias"))
+                        }
+                    }
+
+                    currentObj.identicon = messageList.getMessageData(i, "identicon")
                     messagesForPlugin.push(currentObj)
                 }
             } catch (e) {
