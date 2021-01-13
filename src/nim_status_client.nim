@@ -196,6 +196,10 @@ proc mainProc() =
 
   nim_status.setSignalEventCallback(callback)
 
+
+  createWebEngineRequestInterceptor()
+
+
   # Qt main event loop is entered here
   # The termination of the loop will be performed when exit() or quit() is called
   info "Starting application..."
