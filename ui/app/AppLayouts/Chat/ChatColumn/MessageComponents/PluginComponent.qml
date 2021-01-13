@@ -96,18 +96,6 @@ WebEngineView {
 
     webChannel: pluginChannel
     // property QtObject otrProfile: WebEngineProfile {
-    profile: WebEngineProfile {
-        offTheRecord: true
-        persistentCookiesPolicy:  WebEngineProfile.NoPersistentCookies
-        // httpUserAgent: defaultProfile.httpUserAgent
-        userScripts: [
-            WebEngineScript {
-                injectionPoint: WebEngineScript.DocumentCreation
-                sourceUrl:  Qt.resolvedUrl("plugin.js")
-                worldId: WebEngineScript.MainWorld // TODO: check https://doc.qt.io/qt-5/qml-qtwebengine-webenginescript.html#worldId-prop
-            }
-        ]
-    }
 
     Connections {
         target: chatsModel
