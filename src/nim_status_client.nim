@@ -15,6 +15,7 @@ import status/libstatus/accounts/constants
 import nim_status
 import status/status as statuslib
 import ./eventemitter
+import app/pluginwebserver
 
 var signalsQObjPointer: pointer
 
@@ -118,6 +119,7 @@ proc mainProc() =
   var onboarding = onboarding.newController(status)
 
   status.events.once("login") do(a: Args):
+    initWebserver()
     var args = AccountArgs(a)
     # Delete login and onboarding from memory to remove any mnemonic that would have been saved in the accounts list
     login.delete()

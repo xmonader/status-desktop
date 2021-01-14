@@ -92,7 +92,8 @@ WebEngineView {
     focus: true
     // url: "https://dap.ps/"
     // url: "./test.html"
-    url: "./test2.html"
+    //url: "./test2.html"
+    url: "http://localhost:8989/pluginX" // TODO: determine random port number and pluginId
 
     webChannel: pluginChannel
     // property QtObject otrProfile: WebEngineProfile {
