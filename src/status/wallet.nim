@@ -1,3 +1,4 @@
+import times
 import json, strformat, strutils, chronicles, sequtils, httpclient, tables
 import json_serialization, stint
 from web3/ethtypes import Address, EthSend, Quantity
@@ -331,11 +332,14 @@ proc getGasPricePredictions*(self: WalletModel): GasPricePrediction =
     # TODO: what about other chains like xdai?
     return GasPricePrediction(safeLow: 1.0, standard: 2.0, fast: 3.0, fastest: 4.0)
   try:
+    let startTime = now()
     let url: string = fmt"https://etherchain.org/api/gasPriceOracle"
     let client = newHttpClient()
     client.headers = newHttpHeaders({ "Content-Type": "application/json" })
     let response = client.request(url)
     result = Json.decode(response.body, GasPricePrediction)
+    let endTime = now()
+    debug "httpCall", url=url, time = (endTime - startTime).inMilliseconds
   except Exception as e:
     echo "error getting gas price predictions"
     echo e.msg

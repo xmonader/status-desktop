@@ -1,3 +1,4 @@
+import times
 import strformat, strutils, stint, httpclient, json, chronicles
 import ../libstatus/wallet as status_wallet
 import ../libstatus/tokens as status_tokens
@@ -21,12 +22,15 @@ var balanceManager = newBalanceManager()
 
 proc getPrice(crypto: string, fiat: string): string =
   try:
+    let startTime = now()
     let url: string = fmt"https://min-api.cryptocompare.com/data/price?fsym={crypto}&tsyms={fiat}"
     let client = newHttpClient()
     client.headers = newHttpHeaders({ "Content-Type": "application/json" })
 
     let response = client.request(url)
     result = $parseJson(response.body)[fiat.toUpper]
+    let endTime = now()
+    debug "httpCall", url=url, time = (endTime - startTime).inMilliseconds
   except Exception as e:
     error "Error getting price", message = e.msg
     result = "0.0"

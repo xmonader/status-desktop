@@ -1,3 +1,4 @@
+import times
 import strformat, httpclient, json, chronicles, sequtils, strutils, tables, sugar
 import ../libstatus/core as status
 import ../libstatus/eth/contracts as contracts
@@ -65,6 +66,7 @@ proc tokensOfOwnerByIndex(contract: Erc721Contract, address: Address): seq[int] 
     index = index + 1
 
 proc getCryptoKittiesBatch*(address: Address, offset: int = 0): seq[Collectible] =
+  let startTime = now()
   var cryptokitties: seq[Collectible]
   cryptokitties = @[]
   # TODO handle testnet -- does this API exist in testnet??
@@ -101,6 +103,9 @@ proc getCryptoKittiesBatch*(address: Address, offset: int = 0): seq[Collectible]
     # Call the API again with offset + 1
     let nextBatch = getCryptoKittiesBatch(address, offset + 1)
     return concat(cryptokitties, nextBatch)
+  let endTime = now()
+  debug "httpCall", url=url, time = (endTime - startTime).inMilliseconds
+
   return cryptokitties
 
 proc getCryptoKitties*(address: Address): string =
@@ -128,6 +133,7 @@ proc getEthermons*(address: Address): string =
     if (tokens.len == 0):
       return $(%*ethermons)
 
+    let startTime = now()
     let tokensJoined = strutils.join(tokens, ",")
     let url = fmt"https://www.ethermon.io/api/monster/get_data?monster_ids={tokensJoined}"
     let client = newHttpClient()
@@ -146,6 +152,8 @@ proc getEthermons*(address: Address): string =
       externalUrl: ""))
       i = i + 1
         
+    let endTime = now()
+    debug "httpCall", url=url, time = (endTime - startTime).inMilliseconds
     return $(%*ethermons)
   except Exception as e:
     error "Error getting Ethermons", msg = e.msg
@@ -173,11 +181,14 @@ proc getKudos*(address: Address): string =
       if (url == ""):
         return  $(%*kudos)
 
+      let startTime = now()
       let client = newHttpClient()
       client.headers = newHttpHeaders({ "Content-Type": "application/json" })
 
       let response = client.request(url)
       let kudo = parseJson(response.body)
+      let endTime = now()
+      debug "httpCall", url=url, time = (endTime - startTime).inMilliseconds
 
       kudos.add(Collectible(id: $token,
       name: kudo["name"].str,

@@ -1,3 +1,4 @@
+import times
 import ./core as status, ./types, ./eth/contracts, ./settings, ./edn_helpers
 import
   json, json_serialization, tables, chronicles, sequtils, httpclient,
@@ -115,10 +116,13 @@ proc getPackData*(id: Stuint[256]): StickerPack =
     # an IPFS identifier. Once decoded, download the content from IPFS. This content
     # is in EDN format, ie https://ipfs.infura.io/ipfs/QmWVVLwVKCwkVNjYJrRzQWREVvEk917PhbHYAUhA1gECTM
     # and it also needs to be decoded in to a nim type
+    let startTime = now()
     var client = newHttpClient()
     let contentHash = contracts.toHex(packData.contentHash)
     let url = "https://ipfs.infura.io/ipfs/" & decodeContentHash(contentHash)
     var ednMeta = client.getContent(url)
+    let endTime = now()
+    debug "httpCall", url=url, time = (endTime - startTime).inMilliseconds
 
     # decode the EDN content in to a StickerPack
     result = edn_helpers.decode[StickerPack](ednMeta)

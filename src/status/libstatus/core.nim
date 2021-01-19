@@ -1,3 +1,4 @@
+import times
 import json, nimcrypto, chronicles
 import nim_status, utils
 
@@ -12,14 +13,17 @@ proc callPrivateRPCRaw*(inputJSON: string): string =
 
 proc callPrivateRPC*(methodName: string, payload = %* []): string =
   try:
+    let startTime = now()
     let inputJSON = %* {
       "jsonrpc": "2.0",
       "method": methodName,
       "params": %payload
     }
-    debug "callPrivateRPC", rpc_method=methodName
+    # debug "callPrivateRPC", rpc_method=methodName
     let response = nim_status.callPrivateRPC($inputJSON)
+    let endTime = now()
     result = $response
+    debug "callPrivateRPC", rpc_method=methodName, time = (endTime - startTime).inMilliseconds
     if parseJSON(result).hasKey("error"):
       error "rpc response error", result = result
   except Exception as e:
