@@ -272,13 +272,33 @@ ModalPopup {
 
             StyledText {
                 visible: !isEdit
-                height: visible ? 50 : 0
+                height: visible ? implicitHeight : 0
                 id: privateExplanation
                 anchors.top: membershipRequirementSetting.bottom
                 wrapMode: Text.WordWrap
-                anchors.topMargin: isEdit ? 0 : Style.current.smallPadding * 2
+                anchors.topMargin: isEdit ? 0 : Style.current.halfPadding
                 width: parent.width
                 text: qsTr("You can require new members to meet certain criteria before they can join. This can be changed at any time")
+            }
+
+            StatusSettingsLineButton {
+                id: ensOnlySwitch
+                anchors.top: privateExplanation.bottom
+                anchors.topMargin: Style.current.padding
+                text: qsTr("Require ENS username")
+                isSwitch: true
+                onClicked: switchChecked = checked
+            }
+
+            StyledText {
+                visible: !isEdit
+                height: visible ? implicitHeight : 0
+                id: ensExplanation
+                anchors.top: ensOnlySwitch.bottom
+                wrapMode: Text.WordWrap
+                anchors.topMargin: isEdit ? 0 : Style.current.halfPadding
+                width: parent.width
+                text: qsTr("Your community requires an ENS username to be able to join")
             }
         }
 
