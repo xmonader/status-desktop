@@ -325,7 +325,8 @@ ModalPopup {
                 error = chatsModel.createCommunity(Utils.filterXSS(nameInput.text),
                                                    Utils.filterXSS(descriptionTextArea.text),
                                                    colorPicker.text,
-                                                   popup.selectedImage)
+                                                   popup.selectedImage,
+                                                   ensOnlySwitch.switchChecked)
             }
 
             if (error) {

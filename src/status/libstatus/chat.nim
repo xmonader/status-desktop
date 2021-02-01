@@ -255,14 +255,18 @@ proc getJoinedComunities*(): seq[Community] =
       communities.add(community)
   return communities
 
-proc createCommunity*(name: string, description: string, color: string, image: string, access: int): Community =
+proc createCommunity*(name: string, description: string, color: string, image: string, access: int, ensOnly: bool): Community =
   let rpcResult = callPrivateRPC("createCommunity".prefix, %*[{
       "permissions": {
         "access": access
       },
       "identity": {
-        "display_name": name,
-        "description": description#,
+        "name": name,
+        "description": description,
+        "ensOnly": ensOnly
+        
+        
+        #,
         # "color": color#,
         # TODO add images once it is supported by Status-Go
         # "images": [

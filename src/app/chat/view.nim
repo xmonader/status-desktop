@@ -724,14 +724,15 @@ QtObject:
       else:
         self.joinedCommunityList.replaceCommunity(community)
 
-  proc createCommunity*(self: ChatsView, name: string, description: string, color: string, imagePath: string): string {.slot.} =
+  proc createCommunity*(self: ChatsView, name: string, description: string, color: string, imagePath: string, ensOnly: bool): string {.slot.} =
     result = ""
+    debug "ENS?", ensOnly
     try:
         # TODO Change this to get it from the user choices
       let access = ord(CommunityAccessLevel.public)
       var image = image_utils.formatImagePath(imagePath)
       let tmpImagePath = image_resizer(image, 2000, TMPDIR)
-      let community = self.status.chat.createCommunity(name, description, color, tmpImagePath, access)
+      let community = self.status.chat.createCommunity(name, description, color, tmpImagePath, access, ensOnly)
       removeFile(tmpImagePath)
      
       if (community.id == ""):
