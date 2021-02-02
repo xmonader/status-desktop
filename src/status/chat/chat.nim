@@ -74,6 +74,7 @@ type Chat* = ref object
   membershipUpdateEvents*: seq[ChatMembershipEvent]
   hasMentions*: bool
   muted*: bool
+  canPost*: bool
   ensName*: string
 
 type CommunityAccessLevel* = enum

@@ -163,8 +163,8 @@ proc toChat*(jsonChat: JsonNode): Chat =
 proc toCommunity*(jsonCommunity: JsonNode): Community =
   result = Community(
     id: jsonCommunity{"id"}.getStr,
-    name: jsonCommunity{"description"}{"identity"}{"display_name"}.getStr,
-    description: jsonCommunity{"description"}{"identity"}{"description"}.getStr,
+    name: jsonCommunity{"name"}.getStr,
+    description: jsonCommunity{"description"}.getStr,
     # color: jsonCommunity{"description"}{"identity"}{"color"}.getStr,
     access: jsonCommunity{"description"}{"permissions"}{"access"}.getInt,
     admin: jsonCommunity{"admin"}.getBool,
@@ -174,19 +174,19 @@ proc toCommunity*(jsonCommunity: JsonNode): Community =
     members: newSeq[string]()
   )
 
-  if jsonCommunity["description"].hasKey("chats") and jsonCommunity["description"]["chats"].kind != JNull:
-    for chatId, chat in jsonCommunity{"description"}{"chats"}:
+  if jsonCommunity.hasKey("chats") and jsonCommunity["chats"].kind != JNull:
+    for chatId, chat in jsonCommunity{"chats"}:
       result.chats.add(Chat(
         id: result.id & chatId,
-        name: chat{"identity"}{"display_name"}.getStr,
-        description: chat{"identity"}{"description"}.getStr,
+        name: chat{"name"}.getStr,
+        canPost: chat{"canPost"}.getBool,
         # TODO get this from access
-      chatType: ChatType.Public#chat{"permissions"}{"access"}.getInt,
+        chatType: ChatType.Public#chat{"permissions"}{"access"}.getInt,
       ))
 
-  if jsonCommunity["description"].hasKey("members") and jsonCommunity["description"]["members"].kind != JNull:
+  if jsonCommunity.hasKey("members") and jsonCommunity["members"].kind != JNull:
     # memberInfo is empty for now
-    for memberPubKey, memeberInfo in jsonCommunity{"description"}{"members"}:
+    for memberPubKey, memeberInfo in jsonCommunity{"members"}:
       result.members.add(memberPubKey)
 
 proc toTextItem*(jsonText: JsonNode): TextItem =
