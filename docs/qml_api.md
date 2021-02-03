@@ -3,11 +3,41 @@
 ### walletModel
 | Name          | Type     | Description  |
 |-----------------------------------|---------|-------------------------------------|
-| `walletModel.accounts*` | `QtObject<AccountList>` | returns current wallet account selected in the Wallet |
+| `walletModel.accounts*` | `QtObject<AccountList>` | returns list of accounts on the node |
+| `walletModel.currentAssetList*` | `QtObject<AssetList>` | returns list of token assets for the currently selected wallet account |
+| `walletModel.currentAssetList*` | `QtObject<CollectiblesList>` | returns list of ERC-721 assets for the currently selected wallet account |
 | `walletModel.currentAccount*` | `QtObject<AccountItemView>` | returns current wallet account selected in the Wallet |
 | `walletModel.focusedAccount*` | `QtObject<AccountItemView>` | returns the focused wallet account selected in the chat transaction modal. |
 | `walletModel.dappBrowserAccount*` | `QtObject<AccountItemView>` | returns the wallet account currently used in the dapp browser. |
+| `walletModel.currentTransactions*` | `QtObject<TransactionList>` | returns the list of transactions for the current selected wallet account. |
 
+#### AccountList
+`QAbstractListModel` to expose node accounts.
+No additional custom APIs exposed to QML.
+
+#### AssetList
+`QAbstractListModel` to expose token assets for a wallet account.
+No additional custom APIs exposed to QML.
+
+#### CollectiblesList
+`QAbstractListModel` to expose ERC-721 assets for a wallet account.
+No additional custom APIs exposed to QML.
+
+#### TransactionList
+`QAbstractListModel` to expose transactions for the currently selected wallet.
+The following roles are available to the model when bound to a QML control:
+
+| Name          | Description  |
+|-----------------------------------|-------------------------------------|
+| `typeValue` | the transaction type |
+| `address` | the transaction "to" address |
+| `blockNumber` | the block number the transaction was included in |
+| `blockHash` | the hash of the block |
+| `timestamp` | Unix timestamp of when the block was created |
+| `gasPrice` | the gas price used in the transaction |
+| `gasLimit` | amount of gas used in the transaction |
+| `gasLimit` | amount of gas used in the transaction |
+| `gasLimit` | amount of gas used in the transaction |
 #### AccountItemView
 This type can be accessed by any of the properties in the `walletModel` that return `QtObject<AccountItemView>`, ie `walletModel.currentAccount.name`. See the `walletModel`table above.
 
