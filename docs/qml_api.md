@@ -30,14 +30,19 @@ The following roles are available to the model when bound to a QML control:
 | Name          | Description  |
 |-----------------------------------|-------------------------------------|
 | `typeValue` | the transaction type |
-| `address` | the transaction "to" address |
+| `address` | ?? |
 | `blockNumber` | the block number the transaction was included in |
 | `blockHash` | the hash of the block |
 | `timestamp` | Unix timestamp of when the block was created |
-| `gasPrice` | the gas price used in the transaction |
-| `gasLimit` | amount of gas used in the transaction |
-| `gasLimit` | amount of gas used in the transaction |
-| `gasLimit` | amount of gas used in the transaction |
+| `gasPrice` | gas price used in the transaction |
+| `gasLimit` | maximum gas allowed in this block |
+| `gasUsed` | amount of gas used in the transaction |
+| `nonce` | transaction nonce |
+| `txStatus` | transaction status |
+| `value` | value (in wei) of the transaction |
+| `fromAddress` | address the transaction was sent from |
+| `to` | address the transaction was sent to |
+| `contract` | ?? likely in a transfer transaction, the token contract interacted with |
 #### AccountItemView
 This type can be accessed by any of the properties in the `walletModel` that return `QtObject<AccountItemView>`, ie `walletModel.currentAccount.name`. See the `walletModel`table above.
 
