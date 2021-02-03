@@ -11,8 +11,7 @@ ModalPopup {
     property string name: community.name
     property string description: community.description
     property int access: community.access
-    // TODO get the real image once it's available
-    property string source: "../../../img/ens-header-dark@2x.png"
+    property string source: community.thumbnailImage
     property int nbMembers: community.nbMembers
 
     id: popup
