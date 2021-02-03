@@ -16,6 +16,8 @@ type
     Joined = UserRole + 7
     Verified = UserRole + 8
     NumMembers = UserRole + 9
+    ThumbnailImage = UserRole + 10
+    LargeImage = UserRole + 11
 
 QtObject:
   type
@@ -56,7 +58,16 @@ QtObject:
       of CommunityRoles.Joined: result = newQVariant(communityItem.joined.bool)
       of CommunityRoles.Verified: result = newQVariant(communityItem.verified.bool)
       of CommunityRoles.NumMembers: result = newQVariant(communityItem.members.len)
-
+      of CommunityRoles.ThumbnailImage:
+        if (not communityItem.communityImage.isNil):
+          result = newQVariant(communityItem.communityImage.thumbnail)
+        else:
+          result = newQVariant("")
+      of CommunityRoles.LargeImage:
+        if (not communityItem.communityImage.isNil):
+          result = newQVariant(communityItem.communityImage.large)
+        else:
+          result = newQVariant("")
 
   method roleNames(self: CommunityList): Table[int, string] =
     {
@@ -68,7 +79,9 @@ QtObject:
       CommunityRoles.Admin.int: "admin",
       CommunityRoles.Verified.int: "verified",
       CommunityRoles.Joined.int: "joined",
-      CommunityRoles.NumMembers.int: "nbMembers"
+      CommunityRoles.NumMembers.int: "nbMembers",
+      CommunityRoles.ThumbnailImage.int:"thumbnailImage",
+      CommunityRoles.LargeImage.int:"largeImage"
     }.toTable
 
   proc setNewData*(self: CommunityList, communityList: seq[Community]) =

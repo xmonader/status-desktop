@@ -1,5 +1,6 @@
 import strformat, json, sequtils
 from message import Message
+import ../libstatus/types
 
 type ChatType* {.pure.}= enum
   Unknown = 0,
@@ -94,6 +95,7 @@ type Community* = object
   admin*: bool
   joined*: bool
   verified*: bool
+  communityImage*: IdentityImage
 
 proc `$`*(self: Chat): string =
   result = fmt"Chat(id:{self.id}, name:{self.name}, active:{self.isActive}, type:{self.chatType})"

@@ -47,11 +47,11 @@ ModalPopup {
             selectedImageValidationError = qsTr("You need to select an image")
         }
 
-        if (colorPicker.text === "") {
-            colorValidationError = qsTr("You need to enter a color")
-        } else if (!Utils.isHexColor(colorPicker.text)) {
-            colorValidationError = qsTr("This field needs to be an hexadecimal color (eg: #4360DF)")
-        }
+//        if (colorPicker.text === "") {
+//            colorValidationError = qsTr("You need to enter a color")
+//        } else if (!Utils.isHexColor(colorPicker.text)) {
+//            colorValidationError = qsTr("This field needs to be an hexadecimal color (eg: #4360DF)")
+//        }
 
         return !nameValidationError && !descriptionTextArea.validationError && !colorValidationError
     }
@@ -216,39 +216,39 @@ ModalPopup {
                 }
             }
 
-            Input {
-                id: colorPicker
-                label: qsTr("Community color")
-                placeholderText: qsTr("Pick a color")
-                anchors.top: addImageButton.bottom
-                anchors.topMargin: Style.current.smallPadding
-                validationError: popup.colorValidationError
+//            Input {
+//                id: colorPicker
+//                label: qsTr("Community color")
+//                placeholderText: qsTr("Pick a color")
+//                anchors.top: addImageButton.bottom
+//                anchors.topMargin: Style.current.smallPadding
+//                validationError: popup.colorValidationError
 
-                StatusIconButton {
-                    icon.name: "caret"
-                    iconRotation: -90
-                    iconColor: Style.current.textColor
-                    icon.width: 13
-                    icon.height: 7
-                    anchors.right: parent.right
-                    anchors.rightMargin: Style.current.smallPadding
-                    anchors.top: parent.top
-                    anchors.topMargin: colorPicker.textField.height / 2 - height / 2 + Style.current.bigPadding
-                    onClicked: colorDialog.open()
-                }
+//                StatusIconButton {
+//                    icon.name: "caret"
+//                    iconRotation: -90
+//                    iconColor: Style.current.textColor
+//                    icon.width: 13
+//                    icon.height: 7
+//                    anchors.right: parent.right
+//                    anchors.rightMargin: Style.current.smallPadding
+//                    anchors.top: parent.top
+//                    anchors.topMargin: colorPicker.textField.height / 2 - height / 2 + Style.current.bigPadding
+//                    onClicked: colorDialog.open()
+//                }
 
-                ColorDialog {
-                    id: colorDialog
-                    title: qsTr("Please choose a color")
-                    onAccepted: {
-                        colorPicker.text = colorDialog.color
-                    }
-                }
-            }
+//                ColorDialog {
+//                    id: colorDialog
+//                    title: qsTr("Please choose a color")
+//                    onAccepted: {
+//                        colorPicker.text = colorDialog.color
+//                    }
+//                }
+//            }
 
             Separator {
                 id: separator1
-                anchors.top: colorPicker.bottom
+                anchors.top: addImageButton.bottom
                 anchors.topMargin: isEdit ? 0 : Style.current.bigPadding
                 visible: !isEdit
             }
@@ -322,11 +322,32 @@ ModalPopup {
             if(isEdit) {
                 console.log("TODO: implement this (not available in status-go yet)");
             } else {
+
+                const aXPercent = 0//imageCropper.selectorRectangle.x / image.width
+                const aYPercent = 1//imageCropper.selectorRectangle.y / image.height
+                const bXPercent = 0//(imageCropper.selectorRectangle.x + imageCropper.selectorRectangle.width) / image.width
+                const bYPercent = 1//(imageCropper.selectorRectangle.y + imageCropper.selectorRectangle.height) / image.height
+
+
+                const aX = Math.round(aXPercent * imagePreview.sourceSize.width)
+                const aY = Math.round(aYPercent * imagePreview.sourceSize.height)
+
+                const bX = Math.round(bXPercent * imagePreview.sourceSize.width)
+                const bY = Math.round(bYPercent * imagePreview.sourceSize.height)
+                console.log('Go!', aX,
+                            aY,
+                            bX,
+                            bY)
+
+
                 error = chatsModel.createCommunity(Utils.filterXSS(nameInput.text),
                                                    Utils.filterXSS(descriptionTextArea.text),
-                                                   colorPicker.text,
+                                                   ensOnlySwitch.switchChecked,
                                                    popup.selectedImage,
-                                                   ensOnlySwitch.switchChecked)
+                                                   aX,
+                                                   aY,
+                                                   bX,
+                                                   bY)
             }
 
             if (error) {

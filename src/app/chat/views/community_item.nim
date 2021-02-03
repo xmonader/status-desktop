@@ -105,3 +105,19 @@ QtObject:
 
   QtProperty[QVariant] members:
     read = getMembers
+
+  proc thumbnailImage*(self: CommunityItemView): string {.slot.} =
+    if (self.communityItem.communityImage.isNil):
+        return ""
+    result = self.communityItem.communityImage.thumbnail
+
+  QtProperty[string] thumbnailImage:
+    read = thumbnailImage
+
+  proc largeImage*(self: CommunityItemView): string {.slot.} =
+    if (self.communityItem.communityImage.isNil):
+        return ""
+    result = self.communityItem.communityImage.large
+
+  QtProperty[string] largeImage:
+    read = largeImage

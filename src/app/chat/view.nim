@@ -724,7 +724,7 @@ QtObject:
       else:
         self.joinedCommunityList.replaceCommunity(community)
 
-  proc createCommunity*(self: ChatsView, name: string, description: string, color: string, imagePath: string, ensOnly: bool): string {.slot.} =
+  proc createCommunity*(self: ChatsView, name: string, description: string, ensOnly: bool, imagePath: string, aX: int, aY: int, bX: int, bY: int): string {.slot.} =
     result = ""
     debug "ENS?", ensOnly
     try:
@@ -732,7 +732,7 @@ QtObject:
       let access = ord(CommunityAccessLevel.public)
       var image = image_utils.formatImagePath(imagePath)
       let tmpImagePath = image_resizer(image, 2000, TMPDIR)
-      let community = self.status.chat.createCommunity(name, description, color, tmpImagePath, access, ensOnly)
+      let community = self.status.chat.createCommunity(name, description, access, ensOnly, tmpImagePath, aX, aY, bX, bY)
       removeFile(tmpImagePath)
      
       if (community.id == ""):

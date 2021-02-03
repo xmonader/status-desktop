@@ -255,29 +255,20 @@ proc getJoinedComunities*(): seq[Community] =
       communities.add(community)
   return communities
 
-proc createCommunity*(name: string, description: string, color: string, image: string, access: int, ensOnly: bool): Community =
+proc createCommunity*(name: string, description: string, access: int, ensOnly: bool, imageUrl: string, aX: int, aY: int, bX: int, bY: int): Community =
   let rpcResult = callPrivateRPC("createCommunity".prefix, %*[{
-      "permissions": {
-        "access": access
-      },
-      "identity": {
-        "name": name,
-        "description": description,
-        "ensOnly": ensOnly
-        
-        
-        #,
-        # "color": color#,
-        # TODO add images once it is supported by Status-Go
-        # "images": [
-        #   {
-        #     "payload": image,
-        #     # TODO get that from an enum
-        #     "image_type": 1 # 1 is a raw payload
-        #   }
-        # ]
-      }
+      # TODO this will need to be renamed membership (small m)
+      "Membership": access,
+      "name": name,
+      "description": description,
+      "ensOnly": ensOnly,
+      "image": imageUrl,
+      "imageAx": aX,
+      "imageAy": aY,
+      "imageBx": bX,
+      "imageBy": bY
     }]).parseJSON()
+  debug "Create response", rpcResult
 
   if rpcResult{"result"}.kind != JNull:
     result = rpcResult["result"]["communities"][0].toCommunity()

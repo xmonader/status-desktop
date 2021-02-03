@@ -165,14 +165,21 @@ proc toCommunity*(jsonCommunity: JsonNode): Community =
     id: jsonCommunity{"id"}.getStr,
     name: jsonCommunity{"name"}.getStr,
     description: jsonCommunity{"description"}.getStr,
-    # color: jsonCommunity{"description"}{"identity"}{"color"}.getStr,
     access: jsonCommunity{"description"}{"permissions"}{"access"}.getInt,
     admin: jsonCommunity{"admin"}.getBool,
     joined: jsonCommunity{"joined"}.getBool,
     verified: jsonCommunity{"verified"}.getBool,
     chats: newSeq[Chat](),
-    members: newSeq[string]()
+    members: newSeq[string](),
+    communityImage: IdentityImage()
   )
+
+  if jsonCommunity.hasKey("images") and jsonCommunity["images"].kind != JNull:
+    debug "Community images0", images = jsonCommunity["images"]
+    if jsonCommunity["images"].hasKey("thumbnail"):
+      result.communityImage.thumbnail = jsonCommunity["images"]["thumbnail"]["uri"].str
+    if jsonCommunity["images"].hasKey("large"):
+      result.communityImage.large = jsonCommunity["images"]["large"]["uri"].str
 
   if jsonCommunity.hasKey("chats") and jsonCommunity["chats"].kind != JNull:
     for chatId, chat in jsonCommunity{"chats"}:
