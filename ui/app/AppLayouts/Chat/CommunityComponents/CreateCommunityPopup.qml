@@ -12,6 +12,13 @@ ModalPopup {
     property string colorValidationError: ""
     property string selectedImageValidationError: ""
     property string selectedImage: ""
+    property var imageDimensions: ({
+        aX: 0,
+        aY: 0,
+        bY: 1,
+        bY: 1
+    })
+
     property QtObject community: chatsModel.activeCommunity
 
     property bool isEdit: false
@@ -142,7 +149,8 @@ ModalPopup {
                         qsTrId("image-files----jpg---jpeg---png-")
                     ]
                     onAccepted: {
-                        selectedImage = imageDialog.fileUrls[0]
+                        popup.selectedImage = imageDialog.fileUrls[0]
+                        imageCropperModal.open()
                     }
                 }
 
@@ -214,8 +222,20 @@ ModalPopup {
                     cursorShape: Qt.PointingHandCursor
                     onClicked: imageDialog.open()
                 }
+
+                ImageCropperModal {
+                    id: imageCropperModal
+                    selectedImage: popup.selectedImage
+                    onCropFinished: {
+                        imageDimensions.aX = aX
+                        imageDimensions.aY = aY
+                        imageDimensions.bX = bX
+                        imageDimensions.bY = bY
+                    }
+                }
             }
 
+            // TODO re-add color picker when status-go supports it
 //            Input {
 //                id: colorPicker
 //                label: qsTr("Community color")
@@ -322,32 +342,14 @@ ModalPopup {
             if(isEdit) {
                 console.log("TODO: implement this (not available in status-go yet)");
             } else {
-
-                const aXPercent = 0//imageCropper.selectorRectangle.x / image.width
-                const aYPercent = 1//imageCropper.selectorRectangle.y / image.height
-                const bXPercent = 0//(imageCropper.selectorRectangle.x + imageCropper.selectorRectangle.width) / image.width
-                const bYPercent = 1//(imageCropper.selectorRectangle.y + imageCropper.selectorRectangle.height) / image.height
-
-
-                const aX = Math.round(aXPercent * imagePreview.sourceSize.width)
-                const aY = Math.round(aYPercent * imagePreview.sourceSize.height)
-
-                const bX = Math.round(bXPercent * imagePreview.sourceSize.width)
-                const bY = Math.round(bYPercent * imagePreview.sourceSize.height)
-                console.log('Go!', aX,
-                            aY,
-                            bX,
-                            bY)
-
-
                 error = chatsModel.createCommunity(Utils.filterXSS(nameInput.text),
                                                    Utils.filterXSS(descriptionTextArea.text),
                                                    ensOnlySwitch.switchChecked,
                                                    popup.selectedImage,
-                                                   aX,
-                                                   aY,
-                                                   bX,
-                                                   bY)
+                                                   imageDimensions.aX,
+                                                   imageDimensions.aY,
+                                                   imageDimensions.bX,
+                                                   imageDimensions.bY)
             }
 
             if (error) {

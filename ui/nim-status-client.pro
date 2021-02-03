@@ -402,6 +402,7 @@ DISTFILES += \
     shared/FormGroup.qml \
     shared/IconButton.qml \
     shared/ImageCropper.qml \
+    shared/ImageCropperModal.qml \
     shared/Input.qml \
     shared/LabelValueRow.qml \
     shared/ModalPopup.qml \

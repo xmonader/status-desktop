@@ -726,14 +726,11 @@ QtObject:
 
   proc createCommunity*(self: ChatsView, name: string, description: string, ensOnly: bool, imagePath: string, aX: int, aY: int, bX: int, bY: int): string {.slot.} =
     result = ""
-    debug "ENS?", ensOnly
     try:
         # TODO Change this to get it from the user choices
       let access = ord(CommunityAccessLevel.public)
       var image = image_utils.formatImagePath(imagePath)
-      let tmpImagePath = image_resizer(image, 2000, TMPDIR)
-      let community = self.status.chat.createCommunity(name, description, access, ensOnly, tmpImagePath, aX, aY, bX, bY)
-      removeFile(tmpImagePath)
+      let community = self.status.chat.createCommunity(name, description, access, ensOnly, image, aX, aY, bX, bY)
      
       if (community.id == ""):
         return "Community was not created. Please try again later"
