@@ -2,7 +2,7 @@
 
 ### walletModel
 | Name          | Type     | Description  |
-|-----------------------------------|---------|-------------------------------------|
+|---------------|----------|--------------|
 | `walletModel.accounts*` | `QtObject<AccountList>` | returns list of accounts on the node |
 | `walletModel.currentAssetList*` | `QtObject<AssetList>` | returns list of token assets for the currently selected wallet account |
 | `walletModel.currentAssetList*` | `QtObject<CollectiblesList>` | returns list of ERC-721 assets for the currently selected wallet account |
@@ -18,7 +18,7 @@
 The following roles are available to the model when bound to a QML control:
 
 | Name          | Description  |
-|-----------------------------------|-------------------------------------|
+|---------------|--------------|
 | `name` | account name defined by user |
 | `address` | account address |
 | `iconColor` | account color chosen by user |
@@ -33,7 +33,7 @@ The following roles are available to the model when bound to a QML control:
 The following roles are available to the model when bound to a QML control:
 
 | Name          | Description  |
-|-----------------------------------|-------------------------------------|
+|---------------|--------------|
 | `name` | token name |
 | `symbol` | token ticker symbol |
 | `value` | amount of token (in wei or equivalent) |
@@ -46,7 +46,7 @@ The following roles are available to the model when bound to a QML control:
 The following roles are available to the model when bound to a QML control:
 
 | Name          | Description  |
-|-----------------------------------|-------------------------------------|
+|---------------|--------------|
 | `collectibleType` | the type of collectible ("cryptokitty", "kudo", "ethermon", "stickers") |
 | `collectiblesJSON` | JSON representation of all collectibles in the list (schema is different for each type of collectible) |
 | `error` | error encountered while fetching the collectibles |
@@ -56,7 +56,7 @@ The following roles are available to the model when bound to a QML control:
 The following roles are available to the model when bound to a QML control:
 
 | Name          | Description  |
-|-----------------------------------|-------------------------------------|
+|---------------|--------------|
 | `typeValue` | the transaction type |
 | `address` | ?? |
 | `blockNumber` | the block number the transaction was included in |
@@ -76,7 +76,7 @@ The following roles are available to the model when bound to a QML control:
 This type can be accessed by any of the properties in the `walletModel` that return `QtObject<AccountItemView>`, ie `walletModel.currentAccount.name`. See the `walletModel`table above.
 
 | Name          | Type     | Description  |
-|-----------------------------------|---------|-------------------------------------|
+|---------------|----------|--------------|
 | `name*` | `string` | display name given to the wallet by the user |
 | `address*` | `string` | wallet's ethereum address |
 | `iconColor*` | `string` | wallet hexadecimal colour assigned to the wallet by the user |
@@ -94,7 +94,7 @@ This type can be accessed by any of the properties in the `walletModel` that ret
 The following roles are available to the model when bound to a QML control:
 
 | Name          | Description  |
-|-----------------------------------|-------------------------------------|
+|---------------|--------------|
 | `name` | token display name |
 | `symbol` | token ticker symbol |
 | `hasIcon` | flag indicating whether or not the token has an icon |
@@ -102,41 +102,23 @@ The following roles are available to the model when bound to a QML control:
 | `decimals` | the number of decimals held by the token |
 | `isCustom` | flag indicating whether the token was added by the user |
 
+### QtProperties
+The following properties can be accessed directly on the `walletModel`, ie `walletModel.etherscanLink`
+| Name          | Type | Accessibility | Signal | Description  |
+|---------------|------|---------------|--------|--------------|
+| `etherscanLink` | `QVariant` | `read` | `etherscanLinkChanged` | link to Etherscan from the current network settings |
+| `signingPhrase` | `QVariant` | `read` | `signingPhraseChanged` | gets the signing phrase |
 
-*walletModel.transactions* - list of transactions (list)
+### Methods
+Methods can be invoked by calling them directly on the `walletModel`, ie `walletModel.getSigningPhrase()`.
 
-each transaction is an object containing:
-* typeValue
-* address
-* blockNumber
-* blockHash
-* timestamp
-* gasPrice
-* gasLimit
-* gasUsed
-* nonce
-* txStatus
-* value
-* fromAddress
-* to
+| Name          | Params | Return type     | Description  |
+|-----------------------------------|---------|-----|-------------------------------------|
+| `getEtherscanLink` | none | `QVariant<string>`| Gets the link to Etherscan from the current network settings |
+| `getSigningPhrase` | none | `QVariant<string>`| Gets the link to Etherscan from the current network settings |
+| `getStatusToken` | none | `string`| Gets the Status token for the current network (ie SNT for mainnet and STT for Ropsten) and returns a stringified JSON object containing `name`, `symbol`, and `address` for the token. |
+| `getCurrentCollectiblesLists` | none | `QVariant<CollectiblesList>`| Gets the `CollectiblesList` for the currently selected wallet. |
 
-*walletModel.assets* - list of assets (list)
-
-each list is an object containing:
-* name
-* symbol
-* value
-* fiatValue
-
-*walletModel.totalFiatBalance* - returns total fiat balance of all accounts (string)
-
-*walletModel.accounts* - list of accounts (list)
-
-each account is an object containing:
-* name
-* address
-* iconColor
-* balance
 
 *walletModel.defaultCurrency* - get current currency (string)
 
