@@ -437,3 +437,6 @@ proc exportCommunity*(self: ChatModel, communityId: string): string =
 
 proc importCommunity*(self: ChatModel, communityKey: string) =
   status_chat.importCommunity(communityKey)
+
+proc requestToJoinCommunity*(self: ChatModel, communityKey: string, ensName: string) =
+  status_chat.requestToJoinCommunity(communityKey, ensName)

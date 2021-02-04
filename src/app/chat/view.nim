@@ -842,3 +842,10 @@ QtObject:
       self.activeCommunity.removeMember(pubKey)
     except Exception as e:
       error "Error removing user from the community", msg = e.msg
+      error "Error importing the community", msg = e.msg
+
+  proc requestToJoinCommunity*(self: ChatsView, communityId: string, ensName: string) {.slot.} =
+    try:
+      self.status.chat.requestToJoinCommunity(communityId, ensName)
+    except Exception as e:
+      error "Error requsting to join the community", msg = e.msg

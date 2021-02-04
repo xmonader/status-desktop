@@ -315,3 +315,9 @@ proc importCommunity*(communityKey: string) =
 
 proc removeUserFromCommunity*(communityId: string, pubKey: string) =
   discard callPrivateRPC("removeUserFromCommunity".prefix, %*[communityId, pubKey])
+
+proc requestToJoinCommunity*(communityId: string, ensName: string) =
+  discard callPrivateRPC("requestToJoinCommunity".prefix, %*[{
+    "communityId": communityId,
+    "ensName": ensName
+  }])

@@ -195,12 +195,14 @@ ModalPopup {
 
             anchors.right: parent.right
             onClicked: {
+                let error
                 if (access === Constants.communityChatOnRequestAccess) {
-                    console.log('request')
+                    console.log('Request', profileModel.profile.username)
                     return
+                    error = chatsModel.requestToJoinCommunity(popup.communityId, profileModel.profile.username)
+                } else {
+                    error = chatsModel.joinCommunity(popup.communityId)
                 }
-
-                const error = chatsModel.joinCommunity(popup.communityId)
 
                 if (error) {
                     joiningError.text = error
