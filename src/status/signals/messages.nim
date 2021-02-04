@@ -170,7 +170,7 @@ proc toCommunity*(jsonCommunity: JsonNode): Community =
     admin: jsonCommunity{"admin"}.getBool,
     joined: jsonCommunity{"joined"}.getBool,
     verified: jsonCommunity{"verified"}.getBool,
-    ensOnly: {"permissions"}{"ens_only"}.getBool,
+    ensOnly: jsonCommunity{"permissions"}{"ens_only"}.getBool,
     canRequestAccess: jsonCommunity{"canRequestAccess"}.getBool,
     canManageUsers: jsonCommunity{"canManageUsers"}.getBool,
     canJoin: jsonCommunity{"canJoin"}.getBool,
