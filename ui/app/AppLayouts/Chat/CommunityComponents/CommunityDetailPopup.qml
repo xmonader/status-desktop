@@ -172,7 +172,8 @@ ModalPopup {
         }
 
         StatusButton {
-            text: qsTr("Join ‘%1’").arg(popup.name)
+            text: ensOnly ? qsTr("Membership requires an ENS username") :
+                      qsTr("Join ‘%1’").arg(popup.name)
             anchors.right: parent.right
             onClicked: {
                 const error = chatsModel.joinCommunity(popup.communityId)
