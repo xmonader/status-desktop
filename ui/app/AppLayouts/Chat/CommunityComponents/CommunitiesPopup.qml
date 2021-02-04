@@ -57,7 +57,7 @@ ModalPopup {
             }
 
             delegate: Item {
-                // TODO add the serach for the name and category once they exist
+                // TODO add the search for the name and category once they exist
                 visible: {
                     if (!searchBox.text) {
                         return true

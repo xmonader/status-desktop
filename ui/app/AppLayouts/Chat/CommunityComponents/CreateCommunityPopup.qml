@@ -344,6 +344,7 @@ ModalPopup {
             } else {
                 error = chatsModel.createCommunity(Utils.filterXSS(nameInput.text),
                                                    Utils.filterXSS(descriptionTextArea.text),
+                                                   membershipRequirementSettingPopup.checkedMembership,
                                                    ensOnlySwitch.switchChecked,
                                                    popup.selectedImage,
                                                    imageDimensions.aX,

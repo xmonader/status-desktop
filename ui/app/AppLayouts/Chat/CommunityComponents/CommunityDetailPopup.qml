@@ -14,6 +14,7 @@ ModalPopup {
     property string source: community.thumbnailImage
     property int nbMembers: community.nbMembers
     property bool ensOnly: community.ensOnly
+    property bool canRequestAccess: community.canRequestAccess
 
     id: popup
 
@@ -43,6 +44,7 @@ ModalPopup {
         StyledText {
             id: accessText
             text: {
+                console.log('ACCESS??', access)
                 switch(access) {
                 case Constants.communityChatPublicAccess: return qsTr("Public community");
                 case Constants.communityChatInvitationOnlyAccess: return qsTr("Invitation only community");
@@ -172,8 +174,27 @@ ModalPopup {
         }
 
         StatusButton {
-            text: ensOnly ? qsTr("Membership requires an ENS username") :
-                      qsTr("Join ‘%1’").arg(popup.name)
+            text: {
+                if (ensOnly && !profileModel.profile.ensVerified) {
+                    return qsTr("Membership requires an ENS username")
+                }
+                switch(access) {
+                case Constants.communityChatPublicAccess: return qsTr("Join ‘%1’").arg(popup.name);
+                case Constants.communityChatInvitationOnlyAccess: return qsTr("You need to be invited");
+                case Constants.communityChatOnRequestAccess: return qsTr("Request to join ‘%1’").arg(pupop.name);
+                default: return qsTr("Unknown community");
+                }
+            }
+            enabled: {
+                if ((ensOnly && !profileModel.profile.ensVerified) ||
+                        access === Constants.communityChatInvitationOnlyAccess ||
+                        (!canRequestAccess && access === Constants.communityChatOnRequestAccess)) {
+                    return false
+                }
+                return access !== Constants.communityChatInvitationOnlyAccess ||
+                     (canRequestAccess && access !== Constants.communityChatOnRequestAccess)
+            }
+
             anchors.right: parent.right
             onClicked: {
                 const error = chatsModel.joinCommunity(popup.communityId)
