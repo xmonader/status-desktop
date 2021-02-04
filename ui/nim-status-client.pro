@@ -399,6 +399,7 @@ DISTFILES += \
     shared/AddButton.qml \
     shared/Address.qml \
     shared/CropCornerRectangle.qml \
+    shared/DelegateModelGeneralized.qml \
     shared/FormGroup.qml \
     shared/IconButton.qml \
     shared/ImageCropper.qml \
