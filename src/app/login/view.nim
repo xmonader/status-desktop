@@ -120,7 +120,16 @@ QtObject:
 
     try:
       let hashedPassword = hashPassword(password)
+      echo "==== opening user db"
       self.status.nimStatus.openUserDB(keyUid, hashedPassword)
+      echo "==== doing login"
+      echo "====================================================================== thread id"
+      echo "====================================================================== thread id"
+      echo "====================================================================== thread id"
+      echo "====================================================================== thread id"
+      echo "====================================================================== thread id"
+      echo "====================================================================== thread id"
+      echo self.status.nimStatus.userDB.repr()
       result = self.status.accounts.login(currentAccountId, hashedPassword).toJson
     except:
       let

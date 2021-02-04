@@ -210,6 +210,9 @@ proc toMessage*(jsonMsg: JsonNode): Message =
     warn "Unknown content type received", type = jsonMsg{"contentType"}.getInt
     contentType = ContentType.Message
 
+  echo "id message!!"
+  echo jsonMsg{"id"}.getStr
+
   var message = Message(
       alias: jsonMsg{"alias"}.getStr,
       userName: "",

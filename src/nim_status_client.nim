@@ -134,7 +134,8 @@ proc mainProc() =
     wallet.checkPendingTransactions()
     wallet.start()
 
-    startWakuV1()
+    echo "==== start waku"
+    startWakuV1(status.nimStatus)
 
 
   engine.setRootContextProperty("loginModel", login.variant)
