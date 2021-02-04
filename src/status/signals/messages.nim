@@ -161,7 +161,6 @@ proc toChat*(jsonChat: JsonNode): Chat =
       result.membershipUpdateEvents.add(jsonMember.toChatMembershipEvent)
 
 proc toCommunity*(jsonCommunity: JsonNode): Community =
-  debug "jsonCommunity", jsonCommunity
   result = Community(
     id: jsonCommunity{"id"}.getStr,
     name: jsonCommunity{"name"}.getStr,
@@ -181,7 +180,6 @@ proc toCommunity*(jsonCommunity: JsonNode): Community =
   )
 
   if jsonCommunity.hasKey("images") and jsonCommunity["images"].kind != JNull:
-    debug "Community images0", images = jsonCommunity["images"]
     if jsonCommunity["images"].hasKey("thumbnail"):
       result.communityImage.thumbnail = jsonCommunity["images"]["thumbnail"]["uri"].str
     if jsonCommunity["images"].hasKey("large"):

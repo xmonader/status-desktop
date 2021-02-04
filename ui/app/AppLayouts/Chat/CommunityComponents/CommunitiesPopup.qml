@@ -37,7 +37,7 @@ ModalPopup {
 
         ListView {
             anchors.fill: parent
-            model: chatsModel.communities
+            model: communitiesDelegateModel
             spacing: 4
             clip: true
             id: communitiesList
@@ -48,7 +48,7 @@ ModalPopup {
                 width: parent.width
                 height: childrenRect.height + Style.current.halfPadding
                 StyledText {
-                    text: section
+                    text: section.toUpperCase()
                 }
                 Separator {
                     anchors.left: popup.left
@@ -56,6 +56,58 @@ ModalPopup {
                 }
             }
 
+        }
+
+        DelegateModel {
+            id: communitiesDelegateModel
+            property var lessThan: [
+                function(left, right) {
+                    return left.name.toLowerCase() < right.name.toLowerCase()
+                }
+            ]
+
+            property int sortOrder: 0
+            onSortOrderChanged: items.setGroups(0, items.count, "unsorted")
+
+            function insertPosition(lessThan, item) {
+                var lower = 0
+                var upper = items.count
+                while (lower < upper) {
+                    var middle = Math.floor(lower + (upper - lower) / 2)
+                    var result = lessThan(item.model, items.get(middle).model);
+                    if (result) {
+                        upper = middle
+                    } else {
+                        lower = middle + 1
+                    }
+                }
+                return lower
+            }
+
+            function sort(lessThan) {
+                while (unsortedItems.count > 0) {
+                    var item = unsortedItems.get(0)
+                    var index = insertPosition(lessThan, item)
+
+                    item.groups = "items"
+                    items.move(item.itemsIndex, index)
+                }
+            }
+
+            items.includeByDefault: false
+            groups: DelegateModelGroup {
+                id: unsortedItems
+                name: "unsorted"
+
+                includeByDefault: true
+                onChanged: {
+                    if (communitiesDelegateModel.sortOrder == communitiesDelegateModel.lessThan.length)
+                        setGroups(0, count, "items")
+                    else
+                        communitiesDelegateModel.sort(communitiesDelegateModel.lessThan[communitiesDelegateModel.sortOrder])
+                }
+            }
+            model: chatsModel.communities
             delegate: Item {
                 // TODO add the search for the name and category once they exist
                 visible: {
@@ -97,9 +149,9 @@ ModalPopup {
 
                 StyledText {
                     id: communityMembers
-                    text: nbMembers === 1 ? 
-                          qsTr("1 member") : 
-                          qsTr("%1 members").arg(nbMembers)
+                    text: nbMembers === 1 ?
+                              qsTr("1 member") :
+                              qsTr("%1 members").arg(nbMembers)
                     anchors.left: communityDesc.left
                     anchors.right: parent.right
                     anchors.top: communityDesc.bottom

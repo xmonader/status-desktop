@@ -44,7 +44,6 @@ ModalPopup {
         StyledText {
             id: accessText
             text: {
-                console.log('ACCESS??', access)
                 switch(access) {
                 case Constants.communityChatPublicAccess: return qsTr("Public community");
                 case Constants.communityChatInvitationOnlyAccess: return qsTr("Invitation only community");
@@ -181,7 +180,7 @@ ModalPopup {
                 switch(access) {
                 case Constants.communityChatPublicAccess: return qsTr("Join ‘%1’").arg(popup.name);
                 case Constants.communityChatInvitationOnlyAccess: return qsTr("You need to be invited");
-                case Constants.communityChatOnRequestAccess: return qsTr("Request to join ‘%1’").arg(pupop.name);
+                case Constants.communityChatOnRequestAccess: return qsTr("Request to join ‘%1’").arg(popup.name);
                 default: return qsTr("Unknown community");
                 }
             }
@@ -191,12 +190,16 @@ ModalPopup {
                         (!canRequestAccess && access === Constants.communityChatOnRequestAccess)) {
                     return false
                 }
-                return access !== Constants.communityChatInvitationOnlyAccess ||
-                     (canRequestAccess && access !== Constants.communityChatOnRequestAccess)
+                return true
             }
 
             anchors.right: parent.right
             onClicked: {
+                if (access === Constants.communityChatOnRequestAccess) {
+                    console.log('request')
+                    return
+                }
+
                 const error = chatsModel.joinCommunity(popup.communityId)
 
                 if (error) {
