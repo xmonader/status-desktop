@@ -10,14 +10,18 @@ type
     Id = UserRole + 1,
     Name = UserRole + 2
     Description = UserRole + 3
-    # Color = UserRole + 4
-    Access = UserRole + 5
-    Admin = UserRole + 6
-    Joined = UserRole + 7
-    Verified = UserRole + 8
-    NumMembers = UserRole + 9
-    ThumbnailImage = UserRole + 10
-    LargeImage = UserRole + 11
+    Access = UserRole + 4
+    Admin = UserRole + 5
+    Joined = UserRole + 6
+    Verified = UserRole + 7
+    NumMembers = UserRole + 8
+    ThumbnailImage = UserRole + 9
+    LargeImage = UserRole + 10
+    EnsOnly = UserRole + 11
+    CanRequestAccess = UserRole + 12
+    CanManageUsers = UserRole + 13
+    CanJoin = UserRole + 14
+    IsMember = UserRole + 15
 
 QtObject:
   type
@@ -52,11 +56,15 @@ QtObject:
       of CommunityRoles.Name: result = newQVariant(communityItem.name)
       of CommunityRoles.Description: result = newQVariant(communityItem.description)
       of CommunityRoles.Id: result = newQVariant(communityItem.id)
-      # of CommunityRoles.Color: result = newQVariant(communityItem.color)
       of CommunityRoles.Access: result = newQVariant(communityItem.access.int)
       of CommunityRoles.Admin: result = newQVariant(communityItem.admin.bool)
       of CommunityRoles.Joined: result = newQVariant(communityItem.joined.bool)
       of CommunityRoles.Verified: result = newQVariant(communityItem.verified.bool)
+      of CommunityRoles.EnsOnly: result = newQVariant(communityItem.ensOnly.bool)
+      of CommunityRoles.CanRequestAccess: result = newQVariant(communityItem.canRequestAccess.bool)
+      of CommunityRoles.CanManageUsers: result = newQVariant(communityItem.canManageUsers.bool)
+      of CommunityRoles.CanJoin: result = newQVariant(communityItem.canJoin.bool)
+      of CommunityRoles.IsMember: result = newQVariant(communityItem.isMember.bool)
       of CommunityRoles.NumMembers: result = newQVariant(communityItem.members.len)
       of CommunityRoles.ThumbnailImage:
         if (not communityItem.communityImage.isNil):
@@ -74,11 +82,15 @@ QtObject:
       CommunityRoles.Name.int:"name",
       CommunityRoles.Description.int:"description",
       CommunityRoles.Id.int: "id",
-      # CommunityRoles.Color.int: "color",
       CommunityRoles.Access.int: "access",
       CommunityRoles.Admin.int: "admin",
       CommunityRoles.Verified.int: "verified",
       CommunityRoles.Joined.int: "joined",
+      CommunityRoles.Joined.int: "ensOnly",
+      CommunityRoles.Joined.int: "canRequestAccess",
+      CommunityRoles.Joined.int: "canManageUsers",
+      CommunityRoles.Joined.int: "canJoin",
+      CommunityRoles.Joined.int: "isMember",
       CommunityRoles.NumMembers.int: "nbMembers",
       CommunityRoles.ThumbnailImage.int:"thumbnailImage",
       CommunityRoles.LargeImage.int:"largeImage"

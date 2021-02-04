@@ -161,14 +161,20 @@ proc toChat*(jsonChat: JsonNode): Chat =
       result.membershipUpdateEvents.add(jsonMember.toChatMembershipEvent)
 
 proc toCommunity*(jsonCommunity: JsonNode): Community =
+  debug "jsonCommunity", jsonCommunity
   result = Community(
     id: jsonCommunity{"id"}.getStr,
     name: jsonCommunity{"name"}.getStr,
     description: jsonCommunity{"description"}.getStr,
-    access: jsonCommunity{"description"}{"permissions"}{"access"}.getInt,
+    access: jsonCommunity{"permissions"}{"access"}.getInt,
     admin: jsonCommunity{"admin"}.getBool,
     joined: jsonCommunity{"joined"}.getBool,
     verified: jsonCommunity{"verified"}.getBool,
+    ensOnly: {"permissions"}{"ens_only"}.getBool,
+    canRequestAccess: jsonCommunity{"canRequestAccess"}.getBool,
+    canManageUsers: jsonCommunity{"canManageUsers"}.getBool,
+    canJoin: jsonCommunity{"canJoin"}.getBool,
+    isMember: jsonCommunity{"isMember"}.getBool,
     chats: newSeq[Chat](),
     members: newSeq[string](),
     communityImage: IdentityImage()

@@ -90,11 +90,15 @@ type Community* = object
   description*: string
   chats*: seq[Chat]
   members*: seq[string]
-  # color*: string
   access*: int
   admin*: bool
   joined*: bool
   verified*: bool
+  ensOnly*: bool
+  canRequestAccess*: bool
+  canManageUsers*: bool
+  canJoin*: bool
+  isMember*: bool
   communityImage*: IdentityImage
 
 proc `$`*(self: Chat): string =

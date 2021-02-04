@@ -88,6 +88,31 @@ QtObject:
   QtProperty[bool] verified:
     read = verified
 
+  proc ensOnly*(self: CommunityItemView): bool {.slot.} = result = ?.self.communityItem.ensOnly
+  
+  QtProperty[bool] ensOnly:
+    read = ensOnly
+
+  proc canRequestAccess*(self: CommunityItemView): bool {.slot.} = result = ?.self.communityItem.canRequestAccess
+  
+  QtProperty[bool] canRequestAccess:
+    read = canRequestAccess
+
+  proc canManageUsers*(self: CommunityItemView): bool {.slot.} = result = ?.self.communityItem.canManageUsers
+  
+  QtProperty[bool] canManageUsers:
+    read = canManageUsers
+
+  proc canJoin*(self: CommunityItemView): bool {.slot.} = result = ?.self.communityItem.canJoin
+  
+  QtProperty[bool] canJoin:
+    read = canJoin
+
+  proc isMember*(self: CommunityItemView): bool {.slot.} = result = ?.self.communityItem.isMember
+  
+  QtProperty[bool] isMember:
+    read = isMember
+
   proc nbMembers*(self: CommunityItemView): int {.slot.} = result = ?.self.communityItem.members.len
   
   QtProperty[int] nbMembers:

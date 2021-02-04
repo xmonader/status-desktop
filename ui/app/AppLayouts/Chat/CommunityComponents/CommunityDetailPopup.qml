@@ -13,6 +13,7 @@ ModalPopup {
     property int access: community.access
     property string source: community.thumbnailImage
     property int nbMembers: community.nbMembers
+    property bool ensOnly: community.ensOnly
 
     id: popup
 
@@ -40,7 +41,7 @@ ModalPopup {
         }
 
         StyledText {
-            // TODO get this from access property
+            id: accessText
             text: {
                 switch(access) {
                 case Constants.communityChatPublicAccess: return qsTr("Public community");
@@ -51,6 +52,17 @@ ModalPopup {
             }
             anchors.left: communityName.left
             anchors.top: communityName.bottom
+            anchors.topMargin: 2
+            font.pixelSize: 15
+            font.weight: Font.Thin
+            color: Style.current.secondaryText
+        }
+
+        StyledText {
+            visible: popup.ensOnly
+            text: qsTr(" - ENS Only")
+            anchors.left: accessText.right
+            anchors.verticalCenter: accessText.verticalCenter
             anchors.topMargin: 2
             font.pixelSize: 15
             font.weight: Font.Thin

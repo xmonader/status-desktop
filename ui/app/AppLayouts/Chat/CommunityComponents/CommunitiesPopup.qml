@@ -112,7 +112,7 @@ ModalPopup {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     onClicked: {
-                        if (joined) {
+                        if (joined && isMember) {
                             chatsModel.setActiveCommunity(id)
                         } else {
                             chatsModel.setObservedCommunity(id)
