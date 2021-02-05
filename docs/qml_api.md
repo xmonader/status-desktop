@@ -106,8 +106,14 @@ The following roles are available to the model when bound to a QML control:
 The following properties can be accessed directly on the `walletModel`, ie `walletModel.etherscanLink`
 | Name          | Type | Accessibility | Signal | Description  |
 |---------------|------|---------------|--------|--------------|
-| `etherscanLink` | `QVariant` | `read` | `etherscanLinkChanged` | link to Etherscan from the current network settings |
-| `signingPhrase` | `QVariant` | `read` | `signingPhraseChanged` | gets the signing phrase |
+| `etherscanLink` | `QVariant<string>` | `read` | `etherscanLinkChanged` | link to Etherscan from the current network settings |
+| `signingPhrase` | `QVariant<string>` | `read` | `signingPhraseChanged` | gets the signing phrase |
+| `collectiblesLists` | `QVariant<CollectiblesList>` | `read`/`write` | `currentCollectiblesListsChanged` | Gets the list of collectibles for the currently selected wallet. |
+| `transactions` | `QVariant<TransactionList>` | `read`/`write` | `currentTransactionsChanged` | Gets the list of transactions for the currently selected wallet. |
+| `currentAccount` | `QVariant<AccountItemView>` | `read`/`write` | `currentAccountChanged` | gets the currently selected account |
+| `focusedAccount` | `QVariant<AccountItemView>` | `read`/`write` | `focusedAccountChanged` | gets the currently focused account in the chat transaction modal |
+| `assets` | `QVariant<AssetList>` | `read`/`write` | `currentAssetListChanged` | returns list of token assets for the currently selected wallet account |
+| `assets` | `QVariant<string>` | `read`/`write` | `totalFiatBalanceChanged` | returns the total equivalent fiat balance of all wallets in the format `#.##` |
 
 ### Methods
 Methods can be invoked by calling them directly on the `walletModel`, ie `walletModel.getSigningPhrase()`.
@@ -117,8 +123,14 @@ Methods can be invoked by calling them directly on the `walletModel`, ie `wallet
 | `getEtherscanLink` | none | `QVariant<string>`| Gets the link to Etherscan from the current network settings |
 | `getSigningPhrase` | none | `QVariant<string>`| Gets the link to Etherscan from the current network settings |
 | `getStatusToken` | none | `string`| Gets the Status token for the current network (ie SNT for mainnet and STT for Ropsten) and returns a stringified JSON object containing `name`, `symbol`, and `address` for the token. |
-| `getCurrentCollectiblesLists` | none | `QVariant<CollectiblesList>`| Gets the `CollectiblesList` for the currently selected wallet. |
-
+| `getCurrentCollectiblesLists` | none | `QVariant<CollectiblesList>`| Gets the list of collectibles for the currently selected wallet. |
+| `getCurrentTransactions` | none | `QVariant<TransactionList>`| Gets the list of transactions for the currently selected wallet. |
+| `setCurrentAccountByIndex` | index (`int`): index of the account in the list of accounts | `void`| sets the currently selected account to the account at the provided index |
+| `getCurrentAccount` | none | `QVariant<AccountItemView>`| gets the currently selected account |
+| `setFocusedAccountByAddress` | address (`string`): address of the account to focus | `void`| sets the focused account in the chat transaction modal to the account with the provided address |
+| `getFocusedAccount` | none | `QVariant<AccountItemView>`| gets the currently focused account in the chat transaction modal |
+| `getCurrentAssetList` | none | `QVariant<AssetList>`| returns list of token assets for the currently selected wallet account |
+| `getTotalFiatBalance` | none | `QVariant<string>`| returns the total equivalent fiat balance of all wallets in the format `#.##` |
 
 *walletModel.defaultCurrency* - get current currency (string)
 
