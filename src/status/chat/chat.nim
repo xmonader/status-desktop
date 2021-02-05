@@ -79,10 +79,18 @@ type Chat* = ref object
   ensName*: string
 
 type CommunityAccessLevel* = enum
-    unknown = 0
-    public = 1
-    invitationOnly = 2
-    onRequest = 3
+  unknown = 0
+  public = 1
+  invitationOnly = 2
+  onRequest = 3
+
+type CommunityMembershipRequest* = object
+  id*: string
+  publicKey*: string
+  chatId*: string
+  communityId*: string
+  state*: int
+  our*: string
 
 type Community* = object
   id*: string
@@ -100,6 +108,7 @@ type Community* = object
   canJoin*: bool
   isMember*: bool
   communityImage*: IdentityImage
+  membershipRequests*: seq[CommunityMembershipRequest]
 
 proc `$`*(self: Chat): string =
   result = fmt"Chat(id:{self.id}, name:{self.name}, active:{self.isActive}, type:{self.chatType})"
@@ -133,6 +142,15 @@ proc findIndexById*(self: seq[Chat], id: string): int =
       break
 
 proc findIndexById*(self: seq[Community], id: string): int =
+  result = -1
+  var idx = -1
+  for item in self:
+    inc idx
+    if(item.id == id):
+      result = idx
+      break
+
+proc findIndexById*(self: seq[CommunityMembershipRequest], id: string): int =
   result = -1
   var idx = -1
   for item in self:

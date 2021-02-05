@@ -3,10 +3,12 @@ import ../../../status/[chat/chat, status]
 import channels_list
 import ../../../eventemitter
 import community_members_list
+import community_membership_request_list
 
 QtObject:
   type CommunityItemView* = ref object of QObject
     communityItem*: Community
+    communityMembershipRequestList*: CommunityMembershipRequestList
     chats*: ChannelsList
     members*: CommunityMembersView
     status*: Status
@@ -25,6 +27,7 @@ QtObject:
     result.status = status
     result.active = false
     result.chats = newChannelsList(status)
+    result.communityMembershipRequestList = newCommunityMembershipRequestList()
     result.members = newCommunityMembersView(status)
     result.setup
 
@@ -32,6 +35,7 @@ QtObject:
     self.communityItem = communityItem
     self.chats.setChats(communityItem.chats)
     self.members.setMembers(communityItem.members)
+    self.communityMembershipRequestList.setNewData(communityItem.membershipRequests)
 
   proc activeChanged*(self: CommunityItemView) {.signal.}
 

@@ -268,7 +268,6 @@ proc createCommunity*(name: string, description: string, access: int, ensOnly: b
       "imageBx": bX,
       "imageBy": bY
     }]).parseJSON()
-  debug "Create response", rpcResult
 
   if rpcResult{"result"}.kind != JNull:
     result = rpcResult["result"]["communities"][0].toCommunity()
@@ -321,3 +320,14 @@ proc requestToJoinCommunity*(communityId: string, ensName: string) =
     "communityId": communityId,
     "ensName": ensName
   }])
+
+proc pendingRequestsToJoinForCommunity*(communityId: string): seq[CommunityMembershipRequest] =
+  let rpcResult = callPrivateRPC("pendingRequestsToJoinForCommunity".prefix, %*[communityId]).parseJSON()
+
+  var communityRequests: seq[CommunityMembershipRequest] = @[]
+
+  if rpcResult{"result"}.kind != JNull:
+    for jsonCommunityReqest in rpcResult["result"]:
+      communityRequests.add(jsonCommunityReqest.toCommunityMembershipRequest())
+
+  return communityRequests

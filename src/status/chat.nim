@@ -25,6 +25,7 @@ type
     contacts*: seq[Profile]
     emojiReactions*: seq[Reaction]
     communities*: seq[Community]
+    communityMembershipRequests*: seq[CommunityMembershipRequest]
 
   ChatIdArg* = ref object of Args
     chatId*: string
@@ -70,7 +71,7 @@ proc newChatModel*(events: EventEmitter): ChatModel =
 proc delete*(self: ChatModel) =
   discard
 
-proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community]) =
+proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiReactions: seq[Reaction], communities: seq[Community], communityMembershipRequests: seq[CommunityMembershipRequest]) =
   for chat in chats:
     if chat.isActive:
       self.channels[chat.id] = chat
@@ -84,7 +85,7 @@ proc update*(self: ChatModel, chats: seq[Chat], messages: seq[Message], emojiRea
       if self.lastMessageTimestamps[chatId] > ts:
         self.lastMessageTimestamps[chatId] = ts
       
-  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[], emojiReactions: emojiReactions, communities: communities))
+  self.events.emit("chatUpdate", ChatUpdateArgs(messages: messages, chats: chats, contacts: @[], emojiReactions: emojiReactions, communities: communities, communityMembershipRequests: communityMembershipRequests))
 
 proc hasChannel*(self: ChatModel, chatId: string): bool =
   self.channels.hasKey(chatId)
@@ -440,3 +441,6 @@ proc importCommunity*(self: ChatModel, communityKey: string) =
 
 proc requestToJoinCommunity*(self: ChatModel, communityKey: string, ensName: string) =
   status_chat.requestToJoinCommunity(communityKey, ensName)
+
+proc pendingRequestsToJoinForCommunity*(self: ChatModel, communityKey: string): seq[CommunityMembershipRequest] =
+  result = status_chat.pendingRequestsToJoinForCommunity(communityKey)

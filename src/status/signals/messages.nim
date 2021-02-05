@@ -21,6 +21,8 @@ proc toReaction*(jsonReaction: JsonNode): Reaction
 
 proc toCommunity*(jsonCommunity: JsonNode): Community
 
+proc toCommunityMembershipRequest*(jsonCommunityMembershipRequest: JsonNode): CommunityMembershipRequest
+
 proc fromEvent*(event: JsonNode): Signal = 
   var signal:MessageSignal = MessageSignal()
   signal.messages = @[]
@@ -61,6 +63,10 @@ proc fromEvent*(event: JsonNode): Signal =
   if event["event"]{"communities"} != nil:
     for jsonCommunity in event["event"]["communities"]:
       signal.communities.add(jsonCommunity.toCommunity)
+
+  if event["event"]{"requestsToJoinCommunity"} != nil:
+    for jsonCommunity in event["event"]["requestsToJoinCommunity"]:
+      signal.membershipRequests.add(jsonCommunity.toCommunityMembershipRequest)
 
   result = signal
 
@@ -199,6 +205,16 @@ proc toCommunity*(jsonCommunity: JsonNode): Community =
     # memberInfo is empty for now
     for memberPubKey, memeberInfo in jsonCommunity{"members"}:
       result.members.add(memberPubKey)
+
+proc toCommunityMembershipRequest*(jsonCommunityMembershipRequest: JsonNode): CommunityMembershipRequest =
+  result = CommunityMembershipRequest(
+    id: jsonCommunityMembershipRequest{"id"}.getStr,
+    publicKey: jsonCommunityMembershipRequest{"publicKey"}.getStr,
+    chatId: jsonCommunityMembershipRequest{"chatId"}.getStr,
+    state: jsonCommunityMembershipRequest{"state"}.getInt,
+    communityId: jsonCommunityMembershipRequest{"communityId"}.getStr,
+    our: jsonCommunityMembershipRequest{"our"}.getStr,
+  )
 
 proc toTextItem*(jsonText: JsonNode): TextItem =
   result = TextItem(

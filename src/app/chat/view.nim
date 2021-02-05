@@ -680,6 +680,21 @@ QtObject:
 
   QtProperty[QVariant] transactions:
     read = getTransactions
+
+  proc pendingRequestsToJoinForCommunity*(self: ChatsView, communityId: string): seq[CommunityMembershipRequest] =
+    result = self.status.chat.pendingRequestsToJoinForCommunity(communityId)
+
+  proc addMembershipRequests*(self: ChatsView, membershipRequests: seq[CommunityMembershipRequest]) =
+    var communityId: string
+    var community: Community
+    for request in membershipRequests:
+      communityId = request.communityId
+      community = self.joinedCommunityList.getCommunityById(communityId)
+      if (community.id == ""):
+        continue
+      community.membershipRequests.add(request)
+      self.joinedCommunityList.replaceCommunity(community)
+
   proc communitiesChanged*(self: ChatsView) {.signal.}
 
   proc getCommunitiesIfNotFetched*(self: ChatsView): CommunityList =
@@ -758,6 +773,7 @@ QtObject:
 
   proc setActiveCommunity*(self: ChatsView, communityId: string) {.slot.} =
     if(communityId == ""): return
+    self.addMembershipRequests(self.pendingRequestsToJoinForCommunity(communityId))
     self.activeCommunity.setCommunityItem(self.joinedCommunityList.getCommunityById(communityId))
     self.activeCommunity.setActive(true)
     self.activeCommunityChanged()
