@@ -197,9 +197,12 @@ ModalPopup {
             onClicked: {
                 let error
                 if (access === Constants.communityChatOnRequestAccess) {
-                    console.log('Request', profileModel.profile.username)
-                    return
-                    error = chatsModel.requestToJoinCommunity(popup.communityId, profileModel.profile.username)
+                    error = chatsModel.requestToJoinCommunity(popup.communityId,
+                                                              profileModel.profile.ensVerified ? profileModel.profile.username : "")
+                    if (!error) {
+                        enabled = false
+                        text = qsTr("Pending")
+                    }
                 } else {
                     error = chatsModel.joinCommunity(popup.communityId)
                 }
