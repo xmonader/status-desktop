@@ -439,10 +439,7 @@ Rectangle {
               chatsModel.plainText(Emoji.deparse(messageInputField.text)) :
               chatsModel.plainText(messageInputField.text);
 
-
-
             var properties = "ensName, alias"; // Ignore localNickname
-
 
             let aliasName = item[properties.split(",").map(p => p.trim()).find(p => !!item[p])]
             aliasName = aliasName.replace(/(\.stateofus)?\.eth/, "")
