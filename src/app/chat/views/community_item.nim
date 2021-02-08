@@ -135,6 +135,12 @@ QtObject:
   QtProperty[QVariant] members:
     read = getMembers
 
+  proc getCommunityMembershipRequest*(self: CommunityItemView): QVariant {.slot.} =
+    result = newQVariant(self.communityMembershipRequestList)
+
+  QtProperty[QVariant] communityMembershipRequests:
+    read = getCommunityMembershipRequest
+
   proc thumbnailImage*(self: CommunityItemView): string {.slot.} =
     if (self.communityItem.communityImage.isNil):
         return ""

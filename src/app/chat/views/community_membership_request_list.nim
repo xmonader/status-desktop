@@ -39,23 +39,23 @@ QtObject:
       return
 
     let communityMembershipRequestItem = self.communityMembershipRequests[index.row]
-    let communityMembershipRequestItemRole = role.CommunityRoles
+    let communityMembershipRequestItemRole = role.CommunityMembershipRequestRoles
     case communityMembershipRequestItemRole:
-      of CommunityRoles.Id: result = newQVariant(communityMembershipRequestItem.id.string)
-      of CommunityRoles.PublicKey: result = newQVariant(communityMembershipRequestItem.publicKey.string)
-      of CommunityRoles.ChatId: result = newQVariant(communityMembershipRequestItem.chatId.string)
-      of CommunityRoles.CommunityId: result = newQVariant(communityMembershipRequestItem.communityId.string)
-      of CommunityRoles.State: result = newQVariant(communityMembershipRequestItem.state.string)
-      of CommunityRoles.Our: result = newQVariant(communityMembershipRequestItem.our.string)
+      of CommunityMembershipRequestRoles.Id: result = newQVariant(communityMembershipRequestItem.id.string)
+      of CommunityMembershipRequestRoles.PublicKey: result = newQVariant(communityMembershipRequestItem.publicKey.string)
+      of CommunityMembershipRequestRoles.ChatId: result = newQVariant(communityMembershipRequestItem.chatId.string)
+      of CommunityMembershipRequestRoles.CommunityId: result = newQVariant(communityMembershipRequestItem.communityId.string)
+      of CommunityMembershipRequestRoles.State: result = newQVariant(communityMembershipRequestItem.state.int)
+      of CommunityMembershipRequestRoles.Our: result = newQVariant(communityMembershipRequestItem.our.string)
 
   method roleNames(self: CommunityMembershipRequestList): Table[int, string] =
     {
-      CommunityRoles.Id.int: "id",
-      CommunityRoles.PublicKey.int: "publicKey",
-      CommunityRoles.ChatId.int: "chatId",
-      CommunityRoles.CommunityId.int: "communityId",
-      CommunityRoles.State.int: "state",
-      CommunityRoles.Our.int: "our"
+      CommunityMembershipRequestRoles.Id.int: "id",
+      CommunityMembershipRequestRoles.PublicKey.int: "publicKey",
+      CommunityMembershipRequestRoles.ChatId.int: "chatId",
+      CommunityMembershipRequestRoles.CommunityId.int: "communityId",
+      CommunityMembershipRequestRoles.State.int: "state",
+      CommunityMembershipRequestRoles.Our.int: "our"
     }.toTable
 
   proc setNewData*(self: CommunityMembershipRequestList, communityMembershipRequestList: seq[CommunityMembershipRequest]) =
