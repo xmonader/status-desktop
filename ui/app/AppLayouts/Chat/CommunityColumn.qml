@@ -142,7 +142,13 @@ Item {
         MouseArea {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
+            onClicked: openPopup(membershipRequestsPopupComponent)
         }
+    }
+
+    Component {
+        id: membershipRequestsPopupComponent
+        MembershipRequestsPopup {}
     }
 
     ScrollView {
